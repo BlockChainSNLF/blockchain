@@ -1,8 +1,10 @@
 module Blockchain.Genesis where
 
 import Types.PreBlock
+import Types.Block
 
 import Hashing.Serialization    
+import Hashing.Hash
 
 genesisPreBlock :: PreBlock
 genesisPreBlock = PreBlock {
@@ -16,4 +18,7 @@ genesisPreBlock = PreBlock {
 
 serializedGenesis :: String
 serializedGenesis = serializePreBlock genesisPreBlock
+
+genesisBlock :: Block
+genesisBlock = createBlock genesisPreBlock (hashString serializedGenesis)
 

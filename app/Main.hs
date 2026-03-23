@@ -1,4 +1,6 @@
 module Main where
 
+import Blockchain.Genesis (genesisBlock)
+
 main :: IO ()
-main = putStrLn "Hello, Haskell!"
+main = print genesisBlock
