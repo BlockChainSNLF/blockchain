@@ -1,24 +1,22 @@
 module Blockchain.Genesis where
 
-import Types.PreBlock
-import Types.Block
-
-import Hashing.Serialization    
-import Hashing.Hash
+import Hashing.Hash (hashString)
+import Hashing.Serialization (serializePreBlock)
+import Types.Block (Block, createBlock)
+import Types.PreBlock (PreBlock (..))
 
 genesisPreBlock :: PreBlock
-genesisPreBlock = PreBlock {
-    index = 0,
-    timestamp = 0,
-    transactions = [],
-    previousHash = "0000000000000000000000000000000000000000000000000000000000000000",
-    nonce = 0
-}
-
-
-serializedGenesis :: String
-serializedGenesis = serializePreBlock genesisPreBlock
+genesisPreBlock =
+  PreBlock
+    { index = 0,
+      timestamp = 0,
+      transactions = [],
+      previousHash = replicate 64 '0',
+      nonce = 0
+    }
 
 genesisBlock :: Block
-genesisBlock = createBlock genesisPreBlock (hashString serializedGenesis)
-
+genesisBlock = createBlock genesisPreBlock genesisHash
+  where
+    genesisHash = hashString serializedGenesis
+    serializedGenesis = serializePreBlock genesisPreBlock

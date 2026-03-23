@@ -9,8 +9,8 @@ data Block = Block
   deriving (Show, Eq)
 
 createBlock :: PreBlock -> String -> Block
-createBlock pb hash =
+createBlock pb hashVal =
   Block
     { blockContent = pb,
-      hashValue = hash
+      hashValue = hashVal
     }
