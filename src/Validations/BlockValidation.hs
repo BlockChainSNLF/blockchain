@@ -5,7 +5,7 @@ import Hashing.Serialization (serializePreBlock)
 import Types.Block (Block (..))
 import Types.PreBlock (PreBlock (..))
 
--- Coordinar con Hashing/Mining (Parte 2). Debe ser igual al valor usado al minar.
+-- Coordinar con Nico (Parte 2). Debe ser igual al valor usado al minar.
 difficulty :: Int
 difficulty = 3
 
