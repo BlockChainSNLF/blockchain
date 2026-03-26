@@ -1,4 +1,4 @@
-module Validation.BlockValidation where
+module Validations.BlockValidation where
 
 import Hashing.Hash (hashString)
 import Hashing.Serialization (serializePreBlock)
@@ -30,15 +30,3 @@ isValidBlock prevBlock newBlock =
   hasValidHash newBlock
     && meetsProofOfWork newBlock
     && linksTo prevBlock newBlock
-
-data BlockError
-  = InvalidHash
-  | FailedPoW
-  | BrokenLink
-  deriving (Show, Eq)
-
-validateBlockDetailed :: Block -> Block -> [BlockError]
-validateBlockDetailed prevBlock newBlock =
-  [InvalidHash | not (hasValidHash newBlock)]
-    ++ [FailedPoW | not (meetsProofOfWork newBlock)]
-    ++ [BrokenLink | not (linksTo prevBlock newBlock)]
