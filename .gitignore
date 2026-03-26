@@ -4,6 +4,8 @@ cabal.project.local~
 .ghc.environment.*
 *.hi
 *.o
+.idea
+.stack-work
 
 # HLS / editor
 .vscode/

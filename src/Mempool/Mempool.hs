@@ -1,7 +1,12 @@
-module Mempool.Mempool where
+module Mempool.Mempool
+  ( addTransaction,
+    getTransactions,
+    removeTransactions,
+    reorderTransactions,
+  )
+where
 
 import Data.List (sortBy)
-import Data.Ord (comparing, Down (..))
 import Types.Mempool (Mempool (..))
 import Types.Transaction (Transaction, tip)
 
@@ -10,10 +15,12 @@ addTransaction tx (Mempool txs) = Mempool (txs ++ [tx])
 
 getTransactions :: Mempool -> Int -> [Transaction]
 getTransactions (Mempool txs) n = take n txs
+getTransactions :: Mempool -> Int -> [Transaction]
+getTransactions (Mempool txs) n = take n txs
 
 removeTransactions :: [Transaction] -> Mempool -> Mempool
-removeTransactions mined (Mempool txs) =
-  Mempool (filter (`notElem` mined) txs)
+removeTransactions txs (Mempool mempoolTxs) =
+  Mempool (filter (`notElem` txs) mempoolTxs)
 
 
 reorderTransactions :: Mempool -> Mempool
