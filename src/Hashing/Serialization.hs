@@ -29,3 +29,5 @@ serializeTransaction tx =
     ++ show (amount tx)
     ++ "|"
     ++ sig tx
+    ++ "|"
+    ++ show (tip tx)

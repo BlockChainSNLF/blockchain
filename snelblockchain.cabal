@@ -60,19 +60,28 @@ executable snelblockchain
         Types.Transaction
         Types.PreBlock
         Types.Block
+        Types.Chain
+        Types.Mempool
         Hashing.Serialization
         Hashing.Hash
         Blockchain.Genesis
+        Storage.Storage
+        Mempool.Mempool
+
     build-depends:
-      base ^>=4.18.3.0,
-      bytestring,
-      base16-bytestring,
-      cryptohash-sha256,
-      scotty,
-      aeson,
-      text,warp,
-      wai,
-      http-conduit,
-      dotenv
+        base ^>=4.18.3.0,
+        bytestring,
+        base16-bytestring,
+        cryptohash-sha256,
+        scotty,
+        aeson,
+        text,
+        warp,
+        wai,
+        http-conduit,
+        dotenv
+        Storage.Storage
+        Mempool.Mempool
+
     hs-source-dirs:   app, src
     default-language: Haskell2010

@@ -2,6 +2,7 @@
 
 module Types.Transaction where
 
+<<<<<<< HEAD
 import GHC.Generics (Generic)
 import Data.Aeson (ToJSON, FromJSON)
 
