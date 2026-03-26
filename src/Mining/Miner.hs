@@ -1,20 +1,17 @@
 module Mining.Miner (startMiner) where
 
-import Control.Concurrent (threadDelay, forkIO)
+import Control.Concurrent (forkIO, threadDelay)
 import Control.Monad (forever)
-import Data.IORef (readIORef, modifyIORef')
-
-import Node.State
-import Types.PreBlock
-import Types.Block (Block(..))
-import Types.Chain (Chain(..))
-import Types.Mempool (Mempool(..))
+import Data.IORef (modifyIORef', readIORef)
 import Hashing.Mining (mineBlock)
-import Network.Broadcast (broadcastBlock)
-
 import Mempool.Mempool
+import Network.Broadcast (broadcastBlock)
+import Node.State
 import Storage.Storage
+import Types.Block (Block (..))
 import Types.Ledger
+import Types.Mempool (Mempool (..))
+import Types.PreBlock
 
 difficulty :: Int
 difficulty = 3
@@ -39,7 +36,6 @@ minerLoop state = forever $ do
   if null mempoolTxs
     then return ()
     else do
-
       let ledger = buildLedger chain
 
       let validTxs = filter (isValidTx ledger) mempoolTxs
@@ -47,29 +43,32 @@ minerLoop state = forever $ do
       if null validTxs
         then return ()
         else do
-
           let selectedTxs = take blockSize validTxs
 
           case getLastBlock chain of
             Nothing -> return ()
             Just lastBlock -> do
-
-              let pb = PreBlock
-                    { index = index (blockContent lastBlock) + 1
-                    , timestamp = timestamp (blockContent lastBlock) + 1
-                    , transactions = selectedTxs
-                    , previousHash = hashValue lastBlock
-                    , nonce = 0
-                    }
+              let pb =
+                    PreBlock
+                      { index = index (blockContent lastBlock) + 1,
+                        timestamp = timestamp (blockContent lastBlock) + 1,
+                        transactions = selectedTxs,
+                        previousHash = hashValue lastBlock,
+                        nonce = 0
+                      }
 
               let newBlock = mineBlock difficulty pb
 
-              modifyIORef' state (\s ->
-                s { blockchain = addBlock newBlock (blockchain s)
-                  , mempool = removeTransactions selectedTxs (mempool s)
-                  })
+              modifyIORef'
+                state
+                ( \s ->
+                    s
+                      { blockchain = addBlock newBlock (blockchain s),
+                        mempool = removeTransactions selectedTxs (mempool s)
+                      }
+                )
 
               putStrLn "Block mined"
 
-              peers <- getPeers state
-              broadcastBlock peers newBlock
+              peerList <- getPeers state
+              broadcastBlock peerList newBlock

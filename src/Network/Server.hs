@@ -19,7 +19,6 @@ import Types.Mempool (Mempool (..))
 import Types.Transaction (Transaction)
 import Validations.BlockValidation (isValidBlock)
 import Web.Scotty
-import Web.Scotty (scottyApp)
 
 startServer :: NodeStateRef -> Int -> IO ()
 startServer state port = do
@@ -115,8 +114,8 @@ startServer state port = do
 
               text "Sync ended"
 
-  let settings =
+  let serverSettings =
         setPort port $
           setHost "0.0.0.0" defaultSettings
 
-  runSettings settings app
+  runSettings serverSettings app
