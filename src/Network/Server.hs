@@ -1,97 +1,67 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE BlockArguments #-}
 
-module Network.Server (startServer) where
+module Network.Server where
 
 import Web.Scotty
-import Control.Monad.IO.Class (liftIO)
-import Data.IORef (readIORef, modifyIORef')
+import Control.Monad.IO.Class
+import Data.IORef
 
 import Node.State
-
-import Validations.BlockValidation (isValidBlock)
-import Network.Broadcast (broadcastBlock)
-import Network.Client (fetchChain)
-import Consensus.Consensus (resolveChain)
-import Types.PreBlock
 import Types.Transaction
-import Types.Block (Block(..), createBlock)
+import Types.Block
+import Types.Chain
+import Types.Mempool
 
-import Network.Wai.Handler.Warp (runSettings, defaultSettings, setPort, setHost)
-import Web.Scotty (scottyApp)
+import Storage.Storage
+import Ledger.Ledger
+import Network.Broadcast
+import Network.Client
+import Consensus.Consensus
+import Validations.BlockValidation
 
-startServer :: NodeStateRef -> Int -> IO ()
-startServer state port = do
-  app <- scottyApp do
+startServer state port = scotty port $ do
 
-    get "/health" $
-      text "OK"
+  get "/chain" $ do
+    c <- liftIO $ getBlockchain state
+    json (getChain c)
 
-    get "/chain" do
-      chain <- liftIO $ getBlockchain state
-      json chain
+  get "/peers" $ do
+    ps <- liftIO $ getPeers state
+    json ps
 
-    get "/peers" do
-      ps <- liftIO $ getPeers state
-      json ps
+  post "/peers" $ do
+    p <- jsonData
+    liftIO $ addPeer state p
+    text "peer added"
 
-    post "/peers" do
-      peer <- jsonData :: ActionM Peer
-      liftIO $ addPeer state peer
-      text "Peer added"
+  post "/transactions" $ do
+    tx <- jsonData
 
-    post "/mine" do
-      stateData <- liftIO $ readIORef state
-      let chain = blockchain stateData
-      let lastBlock = last chain
+    s <- liftIO $ readIORef state
+    let ledger = buildLedger (blockchain s)
 
-      let tx = Transaction "Alice" "Bob" 10 "firma123"
+    if isValidTx ledger tx
+      then do
+        liftIO $ modifyIORef' state (\st ->
+          st { mempool = addTransaction tx (mempool st) })
+        ps <- liftIO $ getPeers state
+        liftIO $ broadcastTransaction ps tx
+        text "ok"
+      else text "invalid"
 
-      let newIndex = index (blockContent lastBlock) + 1
+  post "/blocks" $ do
+    b <- jsonData
+    s <- liftIO $ readIORef state
 
-      let newPreBlock = PreBlock
-            { index = newIndex
-            , timestamp = newIndex
-            , transactions = [tx]
-            , previousHash = hashValue lastBlock
-            , nonce = 0
-            }
-
-      let newBlock = createBlock newPreBlock
-
-      liftIO $ modifyIORef' state (\s -> s { blockchain = chain ++ [newBlock] })
-
-      ps <- liftIO $ getPeers state
-      liftIO $ broadcastBlock ps newBlock
-
-      json newBlock
-
-    post "/blocks" do
-      newBlock <- jsonData :: ActionM Block
-      liftIO $ print newBlock
-      stateData <- liftIO $ readIORef state
-
-      let chain = blockchain stateData
-      let lastBlock = last chain
-
-      if isValidBlock lastBlock newBlock
-        then do
-          let newChain = chain ++ [newBlock]
-          liftIO $ modifyIORef' state (\s -> s { blockchain = newChain })
-
-          ps <- liftIO $ getPeers state
-          liftIO $ broadcastBlock ps newBlock
-
-          text "Block agregado"
-        else do
-          ps <- liftIO $ getPeers state
-          peerChains <- liftIO $ mapM fetchChain ps
-
-          let resolved = resolveChain chain peerChains
-
-          liftIO $ modifyIORef' state (\s -> s { blockchain = resolved })
-
-          text "Sync realizado"
+    case getLastBlock (blockchain s) of
+      Nothing -> text "error"
+      Just lastB ->
+        if isValidBlock lastB b
+          then do
+            liftIO $ modifyIORef' state (\st ->
+              st { blockchain = addBlock b (blockchain st) })
+            text "block added"
+          else text "invalid block"
 
   let settings =
         setPort port $
