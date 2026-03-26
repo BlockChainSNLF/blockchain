@@ -57,7 +57,7 @@ startServer state port = do
             , nonce = 0
             }
 
-      let newBlock = createBlock newPreBlock "dummy-hash"
+      let newBlock = createBlock newPreBlock
 
       liftIO $ modifyIORef' state (\s -> s { blockchain = chain ++ [newBlock] })
 

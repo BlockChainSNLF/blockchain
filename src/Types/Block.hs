@@ -4,7 +4,7 @@ module Types.Block where
 
 import GHC.Generics (Generic)
 import Data.Aeson (ToJSON, FromJSON)
-
+import Hashing.Hash (hashString)
 import Types.PreBlock
 
 data Block = Block
@@ -15,9 +15,9 @@ data Block = Block
 instance ToJSON Block
 instance FromJSON Block
 
-createBlock :: PreBlock -> String -> Block
-createBlock pb hashVal =
+createBlock :: PreBlock -> Block
+createBlock pb =
   Block
     { blockContent = pb
-    , hashValue = hashVal
+    , hashValue = hashString (show pb)
     }
