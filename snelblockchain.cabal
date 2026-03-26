@@ -84,7 +84,8 @@ executable snelblockchain
         wai,
         http-conduit,
         dotenv,
-        containers
+        containers,
+        stm
 
     hs-source-dirs:   app, src
     default-language: Haskell2010

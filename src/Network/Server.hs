@@ -46,7 +46,16 @@ startServer state port = do
 
     post "/peers" do
       peer <- jsonData :: ActionM Peer
+
+      stateData <- liftIO $ readIORef state
+      let currentPeers = peers stateData
+
       liftIO $ addPeer state peer
+
+      liftIO $ sendPeer peer (Peer "localhost" port)
+
+      liftIO $ broadcastPeer (filter (/= peer) currentPeers) peer
+
       text "Peer added"
 
     post "/transactions" do

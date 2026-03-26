@@ -4,7 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="de05071d-5e0a-4a0f-9246-ddc00d2988c0" name="Changes" comment="" />
+    <list default="true" id="de05071d-5e0a-4a0f-9246-ddc00d2988c0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.6.7/build/snelblockchain/autogen/Paths_snelblockchain.hs" beforeDir="false" afterPath="$PROJECT_DIR$/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.6.7/build/snelblockchain/autogen/Paths_snelblockchain.hs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.6.7/build/snelblockchain/autogen/cabal_macros.h" beforeDir="false" afterPath="$PROJECT_DIR$/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.6.7/build/snelblockchain/autogen/cabal_macros.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.6.7/setup-config" beforeDir="false" afterPath="$PROJECT_DIR$/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.6.7/setup-config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.6.7/stack-build-caches/f085e448b2ec43a425dcd0d7936c44365ba87388a9456e0334fa134afe44518e/exe-snelblockchain" beforeDir="false" afterPath="$PROJECT_DIR$/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.6.7/stack-build-caches/f085e448b2ec43a425dcd0d7936c44365ba87388a9456e0334fa134afe44518e/exe-snelblockchain" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.stack-work/install/x86_64-linux-tinfo6/f085e448b2ec43a425dcd0d7936c44365ba87388a9456e0334fa134afe44518e/9.6.7/installed-packages/snelblockchain-0.1.0.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.stack-work/stack.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/.stack-work/stack.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/snelblockchain.cabal" beforeDir="false" afterPath="$PROJECT_DIR$/snelblockchain.cabal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Blockchain/Genesis.hs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Blockchain/Genesis.hs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Network/Broadcast.hs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Network/Broadcast.hs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Network/Client.hs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Network/Client.hs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Network/Server.hs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Network/Server.hs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Types/Block.hs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Types/Block.hs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Validations/ChainValidation.hs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Validations/ChainValidation.hs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

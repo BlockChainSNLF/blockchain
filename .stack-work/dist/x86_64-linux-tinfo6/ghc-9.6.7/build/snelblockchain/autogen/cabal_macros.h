@@ -100,6 +100,16 @@
   (major1) == 0 && (major2) <  20 || \
   (major1) == 0 && (major2) == 20 && (minor) <= 1)
 #endif /* MIN_VERSION_scotty */
+/* package stm-2.5.1.0 */
+#ifndef VERSION_stm
+#define VERSION_stm "2.5.1.0"
+#endif /* VERSION_stm */
+#ifndef MIN_VERSION_stm
+#define MIN_VERSION_stm(major1,major2,minor) (\
+  (major1) <  2 || \
+  (major1) == 2 && (major2) <  5 || \
+  (major1) == 2 && (major2) == 5 && (minor) <= 1)
+#endif /* MIN_VERSION_stm */
 /* package text-2.0.2 */
 #ifndef VERSION_text
 #define VERSION_text "2.0.2"
@@ -223,7 +233,7 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "snelblockchain-0.1.0.0-3dZ4Ytb1uU98tQ7flio6zN-snelblockchain"
+#define CURRENT_COMPONENT_ID "snelblockchain-0.1.0.0-8aWjVrlTTQhC1fJOFrCJXB-snelblockchain"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"

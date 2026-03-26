@@ -16,9 +16,9 @@ data Block = Block
 instance ToJSON Block
 instance FromJSON Block
 
-createBlock :: PreBlock -> Block
-createBlock pb =
+createBlock :: PreBlock -> String -> Block
+createBlock pb hash =
   Block
     { blockContent = pb
-    , hashValue = hashString (serializePreBlock pb)
+    , hashValue = hash
     }

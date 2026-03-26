@@ -47,7 +47,7 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 bindir     = "/home/elchurro274/Faculty/BlockChain/blockchain/.stack-work/install/x86_64-linux-tinfo6/f085e448b2ec43a425dcd0d7936c44365ba87388a9456e0334fa134afe44518e/9.6.7/bin"
-libdir     = "/home/elchurro274/Faculty/BlockChain/blockchain/.stack-work/install/x86_64-linux-tinfo6/f085e448b2ec43a425dcd0d7936c44365ba87388a9456e0334fa134afe44518e/9.6.7/lib/x86_64-linux-ghc-9.6.7/snelblockchain-0.1.0.0-3dZ4Ytb1uU98tQ7flio6zN-snelblockchain"
+libdir     = "/home/elchurro274/Faculty/BlockChain/blockchain/.stack-work/install/x86_64-linux-tinfo6/f085e448b2ec43a425dcd0d7936c44365ba87388a9456e0334fa134afe44518e/9.6.7/lib/x86_64-linux-ghc-9.6.7/snelblockchain-0.1.0.0-8aWjVrlTTQhC1fJOFrCJXB-snelblockchain"
 dynlibdir  = "/home/elchurro274/Faculty/BlockChain/blockchain/.stack-work/install/x86_64-linux-tinfo6/f085e448b2ec43a425dcd0d7936c44365ba87388a9456e0334fa134afe44518e/9.6.7/lib/x86_64-linux-ghc-9.6.7"
 datadir    = "/home/elchurro274/Faculty/BlockChain/blockchain/.stack-work/install/x86_64-linux-tinfo6/f085e448b2ec43a425dcd0d7936c44365ba87388a9456e0334fa134afe44518e/9.6.7/share/x86_64-linux-ghc-9.6.7/snelblockchain-0.1.0.0"
 libexecdir = "/home/elchurro274/Faculty/BlockChain/blockchain/.stack-work/install/x86_64-linux-tinfo6/f085e448b2ec43a425dcd0d7936c44365ba87388a9456e0334fa134afe44518e/9.6.7/libexec/x86_64-linux-ghc-9.6.7/snelblockchain-0.1.0.0"

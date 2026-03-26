@@ -5,6 +5,7 @@ import Hashing.Serialization (serializePreBlock)
 import Types.Block (Block, createBlock)
 import Types.PreBlock (PreBlock (..))
 import Types.Transaction (Transaction(..))
+import Hashing.Mining (hashPreBlock)
 
 genesisPreBlock :: PreBlock
 genesisPreBlock =
@@ -16,5 +17,7 @@ genesisPreBlock =
       previousHash = replicate 64 '0',
       nonce = 0
     }
+
 genesisBlock :: Block
-genesisBlock = createBlock genesisPreBlock
+genesisBlock =
+  createBlock genesisPreBlock (hashPreBlock genesisPreBlock)
