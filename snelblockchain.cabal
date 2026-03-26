@@ -60,9 +60,12 @@ executable snelblockchain
         Types.Transaction
         Types.PreBlock
         Types.Block
+        Types.Chain
         Hashing.Serialization
         Hashing.Hash
         Blockchain.Genesis
+        Storage.Storage
+
     build-depends:    
         base ^>=4.18.3.0,
         bytestring,
