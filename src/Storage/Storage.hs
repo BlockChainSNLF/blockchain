@@ -20,4 +20,3 @@ getChain (Chain blocks) = blocks
 replaceChain :: Chain -> Chain -> Chain
 replaceChain newChain _ = newChain
 
-

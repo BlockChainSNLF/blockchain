@@ -5,3 +5,4 @@ import Types.Transaction
 
 newtype Mempool = Mempool [Transaction]
     deriving (Show, Eq)
+

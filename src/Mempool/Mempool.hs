@@ -22,3 +22,6 @@ reorderTransactions (Mempool txs) =
 
 compareByTip :: Transaction -> Transaction -> Ordering
 compareByTip tx1 tx2 = compare (tip tx2) (tip tx1)
+
+initializeMempool :: Mempool
+initializeMempool = Mempool []

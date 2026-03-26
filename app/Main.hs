@@ -1,6 +1,6 @@
 module Main where
 
-import Blockchain.Genesis (genesisBlock)
+import Node.Start
 
 main :: IO ()
-main = print genesisBlock
+main = startNode
