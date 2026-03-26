@@ -8,8 +8,8 @@ import Types.Transaction (Transaction, tip)
 addTransaction :: Transaction -> Mempool -> Mempool
 addTransaction tx (Mempool txs) = Mempool (txs ++ [tx])
 
-getTransactions :: Mempool -> [Transaction]
-getTransactions (Mempool txs) = txs
+getTransactions :: Mempool -> Int -> [Transaction]
+getTransactions (Mempool txs) n = take n txs
 
 removeTransactions :: [Transaction] -> Mempool -> Mempool
 removeTransactions mined (Mempool txs) =

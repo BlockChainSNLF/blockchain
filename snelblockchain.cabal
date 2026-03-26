@@ -74,6 +74,7 @@ executable snelblockchain
 
         Node.Runtime
         Node.NodeState
+        Node.Channels
         Node.BlockLoop
         Node.MiningLoop
         Node.MiningState

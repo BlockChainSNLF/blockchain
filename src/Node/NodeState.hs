@@ -6,6 +6,6 @@ import Types.Mempool
 data NodeState = NodeState
   { nodeChain :: Chain,
     nodeMempool :: Mempool,
-    miningEpoch :: Int
+    miningDifficulty :: Int
   }
   deriving (Show, Eq)

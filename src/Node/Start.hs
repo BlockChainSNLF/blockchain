@@ -1,21 +1,21 @@
 module Node.Start where
 
 import Control.Concurrent (forkIO, threadDelay)
-import Control.Concurrent.MVar
-import Mempool.Mempool
-import Node.NodeState
-import Node.Runtime
-import Node.TransactionLoop
 import Node.BlockLoop
 import Node.MiningLoop
+import Node.Runtime
+import Node.TransactionLoop
 
 startNode :: IO ()
 startNode = do
-  stateVar <- initializeRuntime
+  runtime <- initializeRuntime
+  let stateVar = runtimeStateVar runtime
+  let interruptVar = runtimeInterruptVar runtime
+  let channels = runtimeChannels runtime
 
-  _ <- forkIO (transactionLoop stateVar)
-  _ <- forkIO (blockLoop stateVar)
-  _ <- forkIO (miningLoop stateVar)
+  _ <- forkIO (transactionLoop stateVar channels)
+  _ <- forkIO (blockLoop stateVar interruptVar channels)
+  _ <- forkIO (miningLoop stateVar interruptVar channels)
 
   putStrLn "Node started"
   keepAlive

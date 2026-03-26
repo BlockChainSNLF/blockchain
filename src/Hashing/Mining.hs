@@ -19,16 +19,6 @@ isHashValidForDifficulty difficulty hashResult =
   where
     normalizedDifficulty = max 0 difficulty
 
-buildPreBlock :: Block -> [Transaction] -> PreBlock
-buildPreBlock lastBlock txs =
-  PreBlock
-    { index        = index (blockContent lastBlock) + 1
-    , timestamp    = timestamp (blockContent lastBlock) + 1
-    , transactions = take blockSize txs
-    , previousHash = hashValue lastBlock
-    , nonce        = 0
-    }
-
 mineBlock :: Int -> PreBlock -> Block
 mineBlock difficulty = go . applyNonce 0
   where
