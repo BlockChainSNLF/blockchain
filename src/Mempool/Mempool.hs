@@ -1,22 +1,19 @@
 module Mempool.Mempool where
 
-import Types.Transaction
-import Types.Mempool
 import Data.List (sortBy)
-
+import Data.Ord (comparing, Down (..))
+import Types.Mempool (Mempool (..))
+import Types.Transaction (Transaction, tip)
 addTransaction :: Transaction -> Mempool -> Mempool
 addTransaction tx (Mempool txs) = Mempool (txs ++ [tx])
 
-getTransactions :: Mempool -> Int -> [Transaction]
-getTransactions (Mempool txs) n = take n txs
+getTransactions :: Mempool -> [Transaction]
+getTransactions (Mempool txs) = txs
 
 removeTransactions :: [Transaction] -> Mempool -> Mempool
-removeTransactions txs (Mempool mempoolTxs) =
-  Mempool (filter (`notElem` txs) mempoolTxs)
+removeTransactions mined (Mempool txs) =
+  Mempool (filter (`notElem` mined) txs)
 
-reorderTransactions :: Mempool -> Mempool
-reorderTransactions (Mempool txs) =
-  Mempool (sortBy compareByTip txs)
-
-compareByTip :: Transaction -> Transaction -> Ordering
-compareByTip tx1 tx2 = compare (tip tx2) (tip tx1)
+reorderByTip :: Mempool -> Mempool
+reorderByTip (Mempool txs) =
+  Mempool (sortBy (comparing (Down . tip)) txs)
