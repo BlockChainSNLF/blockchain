@@ -1,5 +1,5 @@
-module Mempool.Mempool where    
-
+module Mempool.Mempool where
+  
 import Types.Transaction
 import Types.Mempool
 import Data.List (sortBy)
