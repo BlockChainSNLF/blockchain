@@ -12,7 +12,7 @@ getTransactions (Mempool txs) n = take n txs
 
 removeTransactions :: [Transaction] -> Mempool -> Mempool
 removeTransactions txs (Mempool mempoolTxs) =
-  Mempool (filter (notElem txs) mempoolTxs)
+  Mempool (filter (`notElem` txs) mempoolTxs)
 
 reorderTransactions :: Mempool -> Mempool
 reorderTransactions (Mempool txs) =

@@ -2,9 +2,11 @@
 
 module Network.Client
   ( sendBlockToPeer
+  , sendTx
   , fetchChain
   ) where
 
+import Types.Transaction (Transaction)
 import Node.State
 import Types.Block (Block)
 import Data.Aeson (encode, decode)

@@ -4,6 +4,8 @@ import Data.List (maximumBy)
 import Data.Ord (comparing)
 import Types.Block (Block)
 import Validations.ChainValidation (isValidChain)
+import Types.Chain (Chain(..))
+import Storage.Storage (getChain)
 
 resolveChain :: Chain -> [Chain] -> Chain
 resolveChain myChain peerChains =

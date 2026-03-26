@@ -10,15 +10,21 @@ import Data.IORef (readIORef, modifyIORef')
 import Node.State
 
 import Validations.BlockValidation (isValidBlock)
-import Network.Broadcast (broadcastBlock)
+import Network.Broadcast (broadcastBlock, broadcastTransaction)
 import Network.Client (fetchChain)
+
 import Consensus.Consensus (resolveChain)
+
 import Types.PreBlock
 import Types.Transaction
-import Types.Block (Block(..), createBlock)
-import Ledger.Ledger
-import Mempool.Mempool
+import Types.Block (Block(..))
+import Types.Chain (Chain(..))
 import Types.Mempool (Mempool(..))
+
+import Storage.Storage (getChain, getLastBlock, addBlock)
+
+import Types.Ledger
+import Mempool.Mempool
 
 import Network.Wai.Handler.Warp (runSettings, defaultSettings, setPort, setHost)
 import Web.Scotty (scottyApp)

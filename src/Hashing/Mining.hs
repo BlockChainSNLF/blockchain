@@ -18,7 +18,7 @@ mineBlock :: Int -> PreBlock -> Block
 mineBlock difficulty = go . applyNonce 0
   where
     go candidate
-      | isHashValidForDifficulty difficulty candidateHash = createBlock candidate candidateHash
+      | isHashValidForDifficulty difficulty candidateHash = createBlock candidate
       | otherwise = go (applyNonce (nonce candidate + 1) candidate)
       where
         candidateHash = hashPreBlock candidate

@@ -14,7 +14,7 @@ import Network.Broadcast (broadcastBlock)
 
 import Mempool.Mempool
 import Storage.Storage
-import Ledger.Ledger
+import Types.Ledger
 
 difficulty :: Int
 difficulty = 3

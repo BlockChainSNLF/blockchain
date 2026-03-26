@@ -1,29 +1,43 @@
 /home/elchurro274/Faculty/BlockChain/blockchain/app/Main.hs:
-  hash: 36cd311f8874377357080506cfcb9ab6c040515dea521b69a12d57e037410304
+  hash: 5d447f13805244bd5feb6ad6154f075a960cea439bcd7bba044f51fc93bd573e
 /home/elchurro274/Faculty/BlockChain/blockchain/snelblockchain.cabal:
-  hash: 0af18bf7a21bd160d2595384217650fca333f2adcca2a05277b9978f8771ef37
+  hash: f2783bb960f0e9c3ef5b17829dcf54608af1f63c9ab1a280f6aa2e7c9804af54
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Blockchain/Genesis.hs:
-  hash: f7f40522761a01f1a8b27bc7ec03da8c5cab2abd0cc30d90ab108dea8faa6412
+  hash: 471174dcd03c72454ac176e7273be8fc28d8f9782e92468f54faa1b574bd1857
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Consensus/Consensus.hs:
-  hash: 91f9fe5a7007ea43e8f5a3a1d78f0c31519b630389e1bb24784d842a5c9c54c3
+  hash: b2ee09cb1e1c0f52b1d698da424031c290386002c4552c4b17314d59259eea3d
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Hashing/Hash.hs:
-  hash: fe09039c1ab105a97ca6b5ab3e0eded3df6a6406f9715ec24f288b100c346429
+  hash: 13ae0692cfe1e770dc898fd9147c666532d6980cee20704b9ca4167a0885dc67
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Hashing/Mining.hs:
+  hash: 27a1c280a5a979e60695b0cc289cc50bd198a2edc1ac3d9195a77650689fa0e9
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Hashing/Serialization.hs:
-  hash: 577b2023cff2781f49cc213bb7337c2415599458c68d374c82c4270a29b11947
+  hash: e59fe01fa4dd6e11d989faebc106956802cd45f9c7e7c1c85e0e3e30847f9330
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Mempool/Mempool.hs:
+  hash: 13e48581beae2aa3ca9b9034c226afb361d20fba0ba696cf246bf7ba0faf9ac0
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Mining/Miner.hs:
+  hash: 1a34f11bd0dbab4fc6e4f9642c4d0e137126d4009bf3c86376341cc430cbf610
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Network/Broadcast.hs:
-  hash: 46a2a78a71be5ca42431460672522c0fafd3c728f01004f9d33501332fd78279
+  hash: c4d654b1b8c9edd3bf32b4e2e9ec2e453bca7972d5602b7f7cf6c462862a7940
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Network/Client.hs:
-  hash: a1682f9ca0bab2615a2a4fd8a0f792ff255b5daa60f7f88ade56389620106b40
+  hash: 0c62bc4846a1c2e8fdf5ae4b50c0960e7ae8da876b8bdcfb72f3c4aaeb3b803f
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Network/Server.hs:
-  hash: cd2eeff0ce10779cd477c46225a0873cecd34d23a95cf83d4574038165eee106
+  hash: bb76a9df290789ffc831df928a2a924ff92b47a45182c4190cd668aaf9e7054f
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Node/State.hs:
-  hash: b4d0690ff21166e920acc17d3408b53e5ccca7310ce0354e7d9ea27210e22f9f
+  hash: b5355bc4048e1a16c324664ff818982970190ae4b8172d3b93743941db79b027
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Storage/Storage.hs:
+  hash: 70c1811b994bededa4345f53832469cf8a185975a5d4c0270f5efe6179b3d921
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Types/Block.hs:
-  hash: d5db4883ef5690a30e476a6c3b51025069c28d76902dff679eb46f8d88348df7
+  hash: 5b11949e00863e82ea8d2b119f62065f876b1b0c594df83ce73d42fddc66cdf8
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Types/Chain.hs:
+  hash: ae93dc40f79399b41cbe0b4e9eb1a67013c4c71d8975b3e9bc3ca92779e01211
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Types/Ledger.hs:
+  hash: 4b0a7b84833d65aeefd1dd6f194e6d80a531304a33fa0877b923e42b90bbc30d
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Types/Mempool.hs:
+  hash: 202f4c770c5a4b5ff34074103c3b558d349d9379613193091709ebd35a62aae9
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Types/PreBlock.hs:
   hash: 2bb4698d2854db89b5c386db656496626d67d9c5664e857ae05b34665b546e99
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Types/Transaction.hs:
-  hash: 0ba8697b3700b3a030174418b3b2b32c5ed1edd60e81b7cb0f3914d180592510
+  hash: 38de65b7d965d86d11791f75c90b409976e27b6e354a1ce20396ab62c1be563f
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Validations/BlockValidation.hs:
   hash: b2d35f98ade9f6f4ce636ab09e55c52aaff6dc8a0ac2d056ab49c9dae17bd630
 /home/elchurro274/Faculty/BlockChain/blockchain/src/Validations/ChainValidation.hs:

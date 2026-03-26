@@ -1,9 +1,11 @@
-module Network.Broadcast (broadcastBlock) where
+module Network.Broadcast (broadcastBlock, broadcastTransaction) where
 
 import Node.State
 import Network.Client (sendBlockToPeer)
 import Types.Block (Block)
 import Control.Exception (try, SomeException)
+import Types.Transaction
+import Network.Client (sendBlockToPeer, sendTx)
 
 broadcastBlock :: [Peer] -> Block -> IO ()
 broadcastBlock peers block =

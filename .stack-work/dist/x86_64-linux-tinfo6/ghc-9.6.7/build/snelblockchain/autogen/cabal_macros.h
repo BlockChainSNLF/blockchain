@@ -50,6 +50,16 @@
   (major1) == 0 && (major2) <  11 || \
   (major1) == 0 && (major2) == 11 && (minor) <= 5)
 #endif /* MIN_VERSION_bytestring */
+/* package containers-0.6.7 */
+#ifndef VERSION_containers
+#define VERSION_containers "0.6.7"
+#endif /* VERSION_containers */
+#ifndef MIN_VERSION_containers
+#define MIN_VERSION_containers(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  6 || \
+  (major1) == 0 && (major2) == 6 && (minor) <= 7)
+#endif /* MIN_VERSION_containers */
 /* package cryptohash-sha256-0.11.102.1 */
 #ifndef VERSION_cryptohash_sha256
 #define VERSION_cryptohash_sha256 "0.11.102.1"
@@ -213,7 +223,7 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "snelblockchain-0.1.0.0-K0GOCZeznNlAI8GdXLP4mt-snelblockchain"
+#define CURRENT_COMPONENT_ID "snelblockchain-0.1.0.0-3dZ4Ytb1uU98tQ7flio6zN-snelblockchain"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"
