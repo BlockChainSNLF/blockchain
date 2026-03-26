@@ -1,12 +1,13 @@
 module Mempool.Mempool
-  ( addTransaction
-  , getTransactions
-  , removeTransactions
-  , reorderTransactions
-  ) where
+  ( addTransaction,
+    getTransactions,
+    removeTransactions,
+    reorderTransactions,
+  )
+where
 
 import Data.List (sortBy)
-import Types.Mempool (Mempool(..))
+import Types.Mempool (Mempool (..))
 import Types.Transaction (Transaction, tip)
 
 addTransaction :: Transaction -> Mempool -> Mempool

@@ -1,11 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Network.Client
-  ( sendBlockToPeer
-  , sendTx
-  , fetchChain
-  , sendPeer
-  ) where
+  ( sendBlockToPeer,
+    sendTx,
+    fetchChain,
+    sendPeer,
+  )
+where
 
 import Data.Aeson (decode)
 import Network.HTTP.Simple
@@ -19,10 +20,10 @@ sendBlockToPeer peer block = do
   initReq <- parseRequest url
 
   let request =
-        setRequestMethod "POST"
-        $ setRequestHeader "Content-Type" ["application/json"]
-        $ setRequestBodyJSON block
-        $ initReq
+        setRequestMethod "POST" $
+          setRequestHeader "Content-Type" ["application/json"] $
+            setRequestBodyJSON block $
+              initReq
 
   _ <- httpNoBody request
   putStrLn $ "Sent block to " ++ url
@@ -33,10 +34,10 @@ sendTx peer tx = do
   req <- parseRequest url
 
   let request =
-        setRequestMethod "POST"
-        $ setRequestHeader "Content-Type" ["application/json"]
-        $ setRequestBodyJSON tx
-        $ req
+        setRequestMethod "POST" $
+          setRequestHeader "Content-Type" ["application/json"] $
+            setRequestBodyJSON tx $
+              req
 
   _ <- httpNoBody request
   pure ()
@@ -61,10 +62,10 @@ sendPeer target newPeer = do
   req <- parseRequest url
 
   let request =
-        setRequestMethod "POST"
-        $ setRequestHeader "Content-Type" ["application/json"]
-        $ setRequestBodyJSON newPeer
-        $ req
+        setRequestMethod "POST" $
+          setRequestHeader "Content-Type" ["application/json"] $
+            setRequestBodyJSON newPeer $
+              req
 
   _ <- httpNoBody request
   putStrLn $ "Sent peer " ++ show newPeer ++ " to " ++ url

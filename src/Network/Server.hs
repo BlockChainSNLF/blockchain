@@ -1,31 +1,29 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Network.Server (startServer) where
 
+import Consensus.Consensus (resolveChain)
 import Control.Monad.IO.Class (liftIO)
 import Data.IORef (modifyIORef', readIORef)
-import Network.Wai.Handler.Warp (defaultSettings, runSettings, setHost, setPort)
-import Web.Scotty
-import Web.Scotty (scottyApp)
-
-import Consensus.Consensus (resolveChain)
 import Mempool.Mempool (addTransaction)
 import Network.Broadcast (broadcastBlock, broadcastPeer, broadcastTransaction)
 import Network.Client (fetchChain, sendPeer)
+import Network.Wai.Handler.Warp (defaultSettings, runSettings, setHost, setPort)
 import Node.State
 import Storage.Storage (addBlock, getChain, getLastBlock)
-import Types.Block (Block(..))
-import Types.Chain (Chain(..))
+import Types.Block (Block (..))
+import Types.Chain (Chain (..))
 import Types.Ledger (applyTx, buildLedger, isValidTx)
-import Types.Mempool (Mempool(..))
+import Types.Mempool (Mempool (..))
 import Types.Transaction (Transaction)
 import Validations.BlockValidation (isValidBlock)
+import Web.Scotty
+import Web.Scotty (scottyApp)
 
 startServer :: NodeStateRef -> Int -> IO ()
 startServer state port = do
   app <- scottyApp do
-
     get "/health" $
       text "OK"
 
@@ -64,14 +62,17 @@ startServer state port = do
 
       if isValidTx ledgerWithPending tx
         then do
-          liftIO $ modifyIORef' state (\s ->
-            s { mempool = addTransaction tx (mempool s) })
+          liftIO $
+            modifyIORef'
+              state
+              ( \s ->
+                  s {mempool = addTransaction tx (mempool s)}
+              )
 
           ps <- liftIO $ getPeers state
           liftIO $ broadcastTransaction ps tx
 
           text "Transaction added"
-
         else text "Invalid transaction"
 
     post "/blocks" do
@@ -83,19 +84,21 @@ startServer state port = do
       case getLastBlock chain of
         Nothing -> text "Empty chain"
         Just lastBlock -> do
-
           if isValidBlock lastBlock newBlock
             then do
               let newChain = addBlock newBlock chain
 
-              liftIO $ modifyIORef' state (\s ->
-                s { blockchain = newChain })
+              liftIO $
+                modifyIORef'
+                  state
+                  ( \s ->
+                      s {blockchain = newChain}
+                  )
 
               ps <- liftIO $ getPeers state
               liftIO $ broadcastBlock ps newBlock
 
               text "Block added"
-
             else do
               ps <- liftIO $ getPeers state
               peerChains <- liftIO $ mapM fetchChain ps
@@ -103,13 +106,17 @@ startServer state port = do
               let peerChainsC = map Chain peerChains
               let resolved = resolveChain chain peerChainsC
 
-              liftIO $ modifyIORef' state (\s ->
-                s { blockchain = resolved })
+              liftIO $
+                modifyIORef'
+                  state
+                  ( \s ->
+                      s {blockchain = resolved}
+                  )
 
               text "Sync ended"
 
   let settings =
         setPort port $
-        setHost "0.0.0.0" defaultSettings
+          setHost "0.0.0.0" defaultSettings
 
   runSettings settings app
