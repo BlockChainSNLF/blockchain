@@ -17,6 +17,8 @@ import GHC.Generics (Generic)
 import Data.Aeson (ToJSON, FromJSON)
 
 import Types.Block (Block)
+import Types.Chain (Chain(..))
+import Types.Mempool (Mempool(..))
 
 type NodeStateRef = IORef NodeState
 
@@ -30,22 +32,24 @@ instance FromJSON Peer
 
 data NodeState = NodeState
   { nodeId :: String
-  , blockchain :: [Block]
+  , blockchain :: Chain
+  , mempool :: Mempool
   , peers :: [Peer]
   }
 
-initNodeState :: String -> [Block] -> IO NodeStateRef
+initNodeState :: String -> Chain -> IO NodeStateRef
 initNodeState nid genesisChain =
   newIORef $ NodeState
     { nodeId = nid
     , blockchain = genesisChain
+    , mempool = Mempool []
     , peers = []
     }
 
-getBlockchain :: NodeStateRef -> IO [Block]
+getBlockchain :: NodeStateRef -> IO Chain
 getBlockchain ref = blockchain <$> readIORef ref
 
-setBlockchain :: NodeStateRef -> [Block] -> IO ()
+setBlockchain :: NodeStateRef -> Chain -> IO ()
 setBlockchain ref newChain =
   modifyIORef' ref (\s -> s { blockchain = newChain })
 
@@ -59,6 +63,7 @@ addPeer ref peer =
       then s
       else s { peers = peer : peers s }
   )
+
 peerToUrl :: Peer -> String
 peerToUrl (Peer host port) =
   "http://" ++ host ++ ":" ++ show port

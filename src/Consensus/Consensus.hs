@@ -5,13 +5,13 @@ import Data.Ord (comparing)
 import Types.Block (Block)
 import Validations.ChainValidation (isValidChain)
 
-resolveChain :: [Block] -> [[Block]] -> [Block]
+resolveChain :: Chain -> [Chain] -> Chain
 resolveChain myChain peerChains =
   let allChains = myChain : peerChains
-      validChains = filter isValidChain allChains
+      validChains = filter (isValidChain . getChain) allChains
    in case validChains of
         [] -> myChain
-        _ -> maximumBy (comparing length) validChains
+        _ -> maximumBy (comparing (length . getChain)) validChains
 
 shouldReplace :: [Block] -> [Block] -> Bool
 shouldReplace myChain candidate =

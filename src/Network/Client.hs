@@ -24,6 +24,20 @@ sendBlockToPeer peer block = do
   response <- httpNoBody request
   putStrLn $ "Sent block to " ++ url
 
+sendTx :: Peer -> Transaction -> IO ()
+sendTx peer tx = do
+  let url = peerToUrl peer ++ "/transactions"
+  req <- parseRequest url
+
+  let request =
+        setRequestMethod "POST"
+        $ setRequestHeader "Content-Type" ["application/json"]
+        $ setRequestBodyJSON tx
+        $ req
+
+  _ <- httpNoBody request
+  return ()
+
 fetchChain :: Peer -> IO [Block]
 fetchChain peer = do
   let url = peerToUrl peer ++ "/chain"

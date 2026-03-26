@@ -56,6 +56,7 @@ common warnings
 executable snelblockchain
     import:           warnings
     main-is:          Main.hs
+
     other-modules:
         Types.Transaction
         Types.PreBlock
@@ -67,6 +68,9 @@ executable snelblockchain
         Blockchain.Genesis
         Storage.Storage
         Mempool.Mempool
+        Consensus.Consensus
+        Validations.BlockValidation
+        Validations.ChainValidation
 
     build-depends:
         base ^>=4.18.3.0,
@@ -80,8 +84,6 @@ executable snelblockchain
         wai,
         http-conduit,
         dotenv
-        Storage.Storage
-        Mempool.Mempool
 
     hs-source-dirs:   app, src
     default-language: Haskell2010

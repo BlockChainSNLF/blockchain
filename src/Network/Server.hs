@@ -1,67 +1,104 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE BlockArguments #-}
 
-module Network.Server where
+module Network.Server (startServer) where
 
 import Web.Scotty
-import Control.Monad.IO.Class
-import Data.IORef
+import Control.Monad.IO.Class (liftIO)
+import Data.IORef (readIORef, modifyIORef')
 
 import Node.State
+
+import Validations.BlockValidation (isValidBlock)
+import Network.Broadcast (broadcastBlock)
+import Network.Client (fetchChain)
+import Consensus.Consensus (resolveChain)
+import Types.PreBlock
 import Types.Transaction
-import Types.Block
-import Types.Chain
-import Types.Mempool
-
-import Storage.Storage
+import Types.Block (Block(..), createBlock)
 import Ledger.Ledger
-import Network.Broadcast
-import Network.Client
-import Consensus.Consensus
-import Validations.BlockValidation
+import Mempool.Mempool
+import Types.Mempool (Mempool(..))
 
-startServer state port = scotty port $ do
+import Network.Wai.Handler.Warp (runSettings, defaultSettings, setPort, setHost)
+import Web.Scotty (scottyApp)
 
-  get "/chain" $ do
-    c <- liftIO $ getBlockchain state
-    json (getChain c)
+startServer :: NodeStateRef -> Int -> IO ()
+startServer state port = do
+  app <- scottyApp do
 
-  get "/peers" $ do
-    ps <- liftIO $ getPeers state
-    json ps
+    get "/health" $
+      text "OK"
 
-  post "/peers" $ do
-    p <- jsonData
-    liftIO $ addPeer state p
-    text "peer added"
+    get "/chain" do
+      chain <- liftIO $ getBlockchain state
+      json (getChain chain)
 
-  post "/transactions" $ do
-    tx <- jsonData
+    get "/peers" do
+      ps <- liftIO $ getPeers state
+      json ps
 
-    s <- liftIO $ readIORef state
-    let ledger = buildLedger (blockchain s)
+    post "/peers" do
+      peer <- jsonData :: ActionM Peer
+      liftIO $ addPeer state peer
+      text "Peer added"
 
-    if isValidTx ledger tx
-      then do
-        liftIO $ modifyIORef' state (\st ->
-          st { mempool = addTransaction tx (mempool st) })
-        ps <- liftIO $ getPeers state
-        liftIO $ broadcastTransaction ps tx
-        text "ok"
-      else text "invalid"
+    post "/transactions" do
+      tx <- jsonData :: ActionM Transaction
 
-  post "/blocks" $ do
-    b <- jsonData
-    s <- liftIO $ readIORef state
+      chain <- liftIO $ getBlockchain state
+      stateData <- liftIO $ readIORef state
 
-    case getLastBlock (blockchain s) of
-      Nothing -> text "error"
-      Just lastB ->
-        if isValidBlock lastB b
-          then do
-            liftIO $ modifyIORef' state (\st ->
-              st { blockchain = addBlock b (blockchain st) })
-            text "block added"
-          else text "invalid block"
+      let baseLedger = buildLedger chain
+
+      let Mempool mempoolTxs = mempool stateData
+      let ledgerWithPending = foldl applyTx baseLedger mempoolTxs
+
+      if isValidTx ledgerWithPending tx
+        then do
+          liftIO $ modifyIORef' state (\s ->
+            s { mempool = addTransaction tx (mempool s) })
+
+          ps <- liftIO $ getPeers state
+          liftIO $ broadcastTransaction ps tx
+
+          text "Transaction added"
+
+        else text "Invalid transaction"
+
+    post "/blocks" do
+      newBlock <- jsonData :: ActionM Block
+
+      stateData <- liftIO $ readIORef state
+      let chain = blockchain stateData
+
+      case getLastBlock chain of
+        Nothing -> text "Empty chain"
+        Just lastBlock -> do
+
+          if isValidBlock lastBlock newBlock
+            then do
+              let newChain = addBlock newBlock chain
+
+              liftIO $ modifyIORef' state (\s ->
+                s { blockchain = newChain })
+
+              ps <- liftIO $ getPeers state
+              liftIO $ broadcastBlock ps newBlock
+
+              text "Block added"
+
+            else do
+              ps <- liftIO $ getPeers state
+              peerChains <- liftIO $ mapM fetchChain ps
+
+              let peerChainsC = map Chain peerChains
+              let resolved = resolveChain chain peerChainsC
+
+              liftIO $ modifyIORef' state (\s ->
+                s { blockchain = resolved })
+
+              text "Sync ended"
 
   let settings =
         setPort port $

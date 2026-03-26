@@ -14,3 +14,7 @@ broadcastBlock peers block =
       case result of
         Left _  -> putStrLn "Peer fallen"
         Right _ -> return ()
+
+broadcastTransaction :: [Peer] -> Transaction -> IO ()
+broadcastTransaction peers tx =
+  mapM_ (\p -> sendTx p tx) peers

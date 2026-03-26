@@ -17,6 +17,3 @@ genesisPreBlock =
 
 genesisBlock :: Block
 genesisBlock = createBlock genesisPreBlock
-  where
-    genesisHash = hashString serializedGenesis
-    serializedGenesis = serializePreBlock genesisPreBlock

@@ -1,5 +1,5 @@
 module Storage.Storage where
-    
+
 import Types.Block
 import Types.Chain
 import Blockchain.Genesis
@@ -19,5 +19,3 @@ getChain (Chain blocks) = blocks
 
 replaceChain :: Chain -> Chain -> Chain
 replaceChain newChain _ = newChain
-
-
