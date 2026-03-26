@@ -63,6 +63,7 @@ executable snelblockchain
         Types.Chain
         Hashing.Serialization
         Hashing.Hash
+        Hashing.Mining
         Blockchain.Genesis
         Storage.Storage
 
