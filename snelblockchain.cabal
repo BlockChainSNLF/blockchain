@@ -61,10 +61,15 @@ executable snelblockchain
         Types.PreBlock
         Types.Block
         Types.Chain
+        Types.Mempool
         Hashing.Serialization
         Hashing.Hash
         Blockchain.Genesis
         Storage.Storage
+        Mempool.Mempool
+        Consensus.Consensus
+        Validations.BlockValidation
+        Validations.ChainValidation
 
     build-depends:    
         base ^>=4.18.3.0,
