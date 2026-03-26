@@ -1,32 +1,15 @@
 module Validations.BlockValidation where
 
-import Hashing.Hash (hashString)
-import Hashing.Serialization (serializePreBlock)
+import Hashing.Mining (isBlockMinedCorrectly)
 import Types.Block (Block (..))
 import Types.PreBlock (PreBlock (..))
-
--- Coordinar con Nico (Parte 2). Debe ser igual al valor usado al minar.
-difficulty :: Int
-difficulty = 3
-
-requiredPrefix :: String
-requiredPrefix = replicate difficulty '0'
-
-hasValidHash :: Block -> Bool
-hasValidHash block =
-  hashValue block == hashString (serializePreBlock (blockContent block))
-
-meetsProofOfWork :: Block -> Bool
-meetsProofOfWork block =
-  take difficulty (hashValue block) == requiredPrefix
 
 linksTo :: Block -> Block -> Bool
 linksTo prevBlock nextBlock =
   previousHash (blockContent nextBlock) == hashValue prevBlock
     && index (blockContent nextBlock) == index (blockContent prevBlock) + 1
 
-isValidBlock :: Block -> Block -> Bool
-isValidBlock prevBlock newBlock =
-  hasValidHash newBlock
-    && meetsProofOfWork newBlock
+isValidBlock :: Int -> Block -> Block -> Bool
+isValidBlock difficulty prevBlock newBlock =
+  isBlockMinedCorrectly difficulty newBlock
     && linksTo prevBlock newBlock

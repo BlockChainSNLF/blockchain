@@ -8,11 +8,11 @@ data ConsensusResult
   | AdoptPeer Chain
   deriving (Show)
 
-shouldReplace :: Chain -> Chain -> Bool
-shouldReplace (Chain my) (Chain candidate) =
-  isValidChain (Chain candidate) && length candidate > length my
+shouldReplace :: Int -> Chain -> Chain -> Bool
+shouldReplace difficulty (Chain my) (Chain candidate) =
+  isValidChain difficulty (Chain candidate) && length candidate > length my
 
-consensusWithOne :: Chain -> Chain -> ConsensusResult
-consensusWithOne myChain peerChain
-  | shouldReplace myChain peerChain = AdoptPeer peerChain
+consensusWithOne :: Int -> Chain -> Chain -> ConsensusResult
+consensusWithOne difficulty myChain peerChain
+  | shouldReplace difficulty myChain peerChain = AdoptPeer peerChain
   | otherwise = KeepMine
