@@ -65,6 +65,7 @@ executable snelblockchain
         Types.Mempool
         Hashing.Serialization
         Hashing.Hash
+        Hashing.Mining
         Blockchain.Genesis
         Storage.Storage
         Mempool.Mempool

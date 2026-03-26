@@ -21,10 +21,14 @@ shouldReplace myChain candidate =
 
 data ConsensusResult
   = KeepMine
-  | AdoptPeer [Block]
+  | AdoptPeer Chain
   deriving (Show)
 
-consensusWithOne :: [Block] -> [Block] -> ConsensusResult
-consensusWithOne myChain peerChain
-  | shouldReplace myChain peerChain = AdoptPeer peerChain
+shouldReplace :: Int -> Chain -> Chain -> Bool
+shouldReplace difficulty (Chain my) (Chain candidate) =
+  isValidChain difficulty (Chain candidate) && length candidate > length my
+
+consensusWithOne :: Int -> Chain -> Chain -> ConsensusResult
+consensusWithOne difficulty myChain peerChain
+  | shouldReplace difficulty myChain peerChain = AdoptPeer peerChain
   | otherwise = KeepMine
