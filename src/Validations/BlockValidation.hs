@@ -1,4 +1,4 @@
-module Validation.BlockValidation where
+module Validations.BlockValidation where
 
 import Hashing.Hash (hashString)
 import Hashing.Serialization (serializePreBlock)

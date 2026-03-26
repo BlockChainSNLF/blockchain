@@ -63,11 +63,16 @@ executable snelblockchain
         Hashing.Serialization
         Hashing.Hash
         Blockchain.Genesis
-    build-depends:    
-        base ^>=4.18.3.0,
-        bytestring,
-        base16-bytestring,
-        cryptohash-sha256
-
+    build-depends:
+      base ^>=4.18.3.0,
+      bytestring,
+      base16-bytestring,
+      cryptohash-sha256,
+      scotty,
+      aeson,
+      text,warp,
+      wai,
+      http-conduit,
+      dotenv
     hs-source-dirs:   app, src
     default-language: Haskell2010

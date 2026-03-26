@@ -1,0 +1,30 @@
+/home/elchurro274/Faculty/BlockChain/blockchain/app/Main.hs:
+  hash: 36cd311f8874377357080506cfcb9ab6c040515dea521b69a12d57e037410304
+/home/elchurro274/Faculty/BlockChain/blockchain/snelblockchain.cabal:
+  hash: 0af18bf7a21bd160d2595384217650fca333f2adcca2a05277b9978f8771ef37
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Blockchain/Genesis.hs:
+  hash: d20cd2319397952bbac590b261d65391eaf12c02760d1d559991a1abeb09e82c
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Consensus/Consensus.hs:
+  hash: 91f9fe5a7007ea43e8f5a3a1d78f0c31519b630389e1bb24784d842a5c9c54c3
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Hashing/Hash.hs:
+  hash: fe09039c1ab105a97ca6b5ab3e0eded3df6a6406f9715ec24f288b100c346429
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Hashing/Serialization.hs:
+  hash: 577b2023cff2781f49cc213bb7337c2415599458c68d374c82c4270a29b11947
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Network/Broadcast.hs:
+  hash: 46a2a78a71be5ca42431460672522c0fafd3c728f01004f9d33501332fd78279
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Network/Client.hs:
+  hash: a1682f9ca0bab2615a2a4fd8a0f792ff255b5daa60f7f88ade56389620106b40
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Network/Server.hs:
+  hash: 8a3c7fb22a8499b7946dab158786196f74503c955e672062610037386d001c3b
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Node/State.hs:
+  hash: b4d0690ff21166e920acc17d3408b53e5ccca7310ce0354e7d9ea27210e22f9f
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Types/Block.hs:
+  hash: 2ce3307b81c5c7811fb19c58a054c5599ab8b4e7b6b2c9523e12934025b37a30
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Types/PreBlock.hs:
+  hash: 2bb4698d2854db89b5c386db656496626d67d9c5664e857ae05b34665b546e99
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Types/Transaction.hs:
+  hash: 0ba8697b3700b3a030174418b3b2b32c5ed1edd60e81b7cb0f3914d180592510
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Validations/BlockValidation.hs:
+  hash: b2d35f98ade9f6f4ce636ab09e55c52aaff6dc8a0ac2d056ab49c9dae17bd630
+/home/elchurro274/Faculty/BlockChain/blockchain/src/Validations/ChainValidation.hs:
+  hash: 3de9101f59be190ffb337fa109463620dbfb539f29ebdcb3ac1a5875e2374e34

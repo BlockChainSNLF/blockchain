@@ -3,7 +3,7 @@ module Consensus.Consensus where
 import Data.List (maximumBy)
 import Data.Ord (comparing)
 import Types.Block (Block)
-import Validation.ChainValidation (isValidChain)
+import Validations.ChainValidation (isValidChain)
 
 resolveChain :: [Block] -> [[Block]] -> [Block]
 resolveChain myChain peerChains =

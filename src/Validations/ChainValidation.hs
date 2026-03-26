@@ -1,8 +1,8 @@
-module Validation.ChainValidation where
+module Validations.ChainValidation where
 
 import Blockchain.Genesis (genesisBlock)
 import Types.Block (Block)
-import Validation.BlockValidation (isValidBlock)
+import Validations.BlockValidation (isValidBlock)
 
 isValidChain :: [Block] -> Bool
 isValidChain [] = False
