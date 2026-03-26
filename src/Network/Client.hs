@@ -7,11 +7,11 @@ module Network.Client
   , sendPeer
   ) where
 
-import Types.Transaction (Transaction)
-import Node.State (Peer, peerToUrl)
-import Types.Block (Block)
 import Data.Aeson (decode)
 import Network.HTTP.Simple
+import Node.State (Peer, peerToUrl)
+import Types.Block (Block)
+import Types.Transaction (Transaction)
 
 sendBlockToPeer :: Peer -> Block -> IO ()
 sendBlockToPeer peer block = do
@@ -39,7 +39,7 @@ sendTx peer tx = do
         $ req
 
   _ <- httpNoBody request
-  return ()
+  pure ()
 
 fetchChain :: Peer -> IO [Block]
 fetchChain peer = do

@@ -4,11 +4,11 @@ module Network.Broadcast
   , broadcastPeer
   ) where
 
+import Control.Exception (SomeException, try)
 import Node.State (Peer)
-import Network.Client (sendBlockToPeer, sendTx, sendPeer)
+import Network.Client (sendBlockToPeer, sendPeer, sendTx)
 import Types.Block (Block)
 import Types.Transaction (Transaction)
-import Control.Exception (try, SomeException)
 
 broadcastBlock :: [Peer] -> Block -> IO ()
 broadcastBlock peers block =
@@ -18,7 +18,7 @@ broadcastBlock peers block =
       result <- try (sendBlockToPeer p block) :: IO (Either SomeException ())
       case result of
         Left _  -> putStrLn $ "Failed to send block to " ++ show p
-        Right _ -> return ()
+        Right _ -> pure ()
 
 broadcastTransaction :: [Peer] -> Transaction -> IO ()
 broadcastTransaction peers tx =
@@ -28,7 +28,7 @@ broadcastTransaction peers tx =
       result <- try (sendTx p tx) :: IO (Either SomeException ())
       case result of
         Left _  -> putStrLn $ "Failed to send tx to " ++ show p
-        Right _ -> return ()
+        Right _ -> pure ()
 
 broadcastPeer :: [Peer] -> Peer -> IO ()
 broadcastPeer peers newPeer =
@@ -38,4 +38,4 @@ broadcastPeer peers newPeer =
       result <- try (sendPeer p newPeer) :: IO (Either SomeException ())
       case result of
         Left _  -> putStrLn $ "Failed to send peer to " ++ show p
-        Right _ -> return ()
+        Right _ -> pure ()

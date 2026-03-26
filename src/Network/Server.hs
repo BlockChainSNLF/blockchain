@@ -3,31 +3,24 @@
 
 module Network.Server (startServer) where
 
-import Web.Scotty
 import Control.Monad.IO.Class (liftIO)
-import Data.IORef (readIORef, modifyIORef')
-
-import Node.State
-
-import Validations.BlockValidation (isValidBlock)
-import Network.Broadcast (broadcastBlock, broadcastTransaction)
-import Network.Client (fetchChain)
+import Data.IORef (modifyIORef', readIORef)
+import Network.Wai.Handler.Warp (defaultSettings, runSettings, setHost, setPort)
+import Web.Scotty
+import Web.Scotty (scottyApp)
 
 import Consensus.Consensus (resolveChain)
-
-import Types.PreBlock
-import Types.Transaction
+import Mempool.Mempool (addTransaction)
+import Network.Broadcast (broadcastBlock, broadcastPeer, broadcastTransaction)
+import Network.Client (fetchChain, sendPeer)
+import Node.State
+import Storage.Storage (addBlock, getChain, getLastBlock)
 import Types.Block (Block(..))
 import Types.Chain (Chain(..))
+import Types.Ledger (applyTx, buildLedger, isValidTx)
 import Types.Mempool (Mempool(..))
-
-import Storage.Storage (getChain, getLastBlock, addBlock)
-
-import Types.Ledger
-import Mempool.Mempool
-
-import Network.Wai.Handler.Warp (runSettings, defaultSettings, setPort, setHost)
-import Web.Scotty (scottyApp)
+import Types.Transaction (Transaction)
+import Validations.BlockValidation (isValidBlock)
 
 startServer :: NodeStateRef -> Int -> IO ()
 startServer state port = do

@@ -15,10 +15,10 @@ isHashValidForDifficulty difficulty hashResult =
     normalizedDifficulty = max 0 difficulty
 
 mineBlock :: Int -> PreBlock -> Block
-mineBlock difficulty = go . applyNonce 0
+mineBlock difficulty preBlock = go (applyNonce 0 preBlock)
   where
     go candidate
-      | isHashValidForDifficulty difficulty candidateHash = createBlock candidate
+      | isHashValidForDifficulty difficulty candidateHash = createBlock candidate candidateHash
       | otherwise = go (applyNonce (nonce candidate + 1) candidate)
       where
         candidateHash = hashPreBlock candidate

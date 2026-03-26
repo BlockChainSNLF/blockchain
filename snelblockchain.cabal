@@ -63,11 +63,18 @@ executable snelblockchain
         Types.Block
         Types.Chain
         Types.Mempool
+        Types.Ledger
         Hashing.Serialization
         Hashing.Hash
+        Hashing.Mining
         Blockchain.Genesis
         Storage.Storage
         Mempool.Mempool
+        Node.State
+        Network.Broadcast
+        Network.Client
+        Network.Server
+        Mining.Miner
         Consensus.Consensus
         Validations.BlockValidation
         Validations.ChainValidation
@@ -79,13 +86,9 @@ executable snelblockchain
         cryptohash-sha256,
         scotty,
         aeson,
-        text,
         warp,
-        wai,
         http-conduit,
-        dotenv,
-        containers,
-        stm
+        containers
 
     hs-source-dirs:   app, src
     default-language: Haskell2010

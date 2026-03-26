@@ -1,8 +1,8 @@
 module Storage.Storage where
 
+import Blockchain.Genesis
 import Types.Block
 import Types.Chain
-import Blockchain.Genesis
 
 initializeStorage :: Chain
 initializeStorage = Chain [genesisBlock]

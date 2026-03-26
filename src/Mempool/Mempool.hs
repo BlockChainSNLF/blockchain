@@ -1,8 +1,13 @@
-module Mempool.Mempool where
+module Mempool.Mempool
+  ( addTransaction
+  , getTransactions
+  , removeTransactions
+  , reorderTransactions
+  ) where
 
-import Types.Transaction
-import Types.Mempool
 import Data.List (sortBy)
+import Types.Mempool (Mempool(..))
+import Types.Transaction (Transaction, tip)
 
 addTransaction :: Transaction -> Mempool -> Mempool
 addTransaction tx (Mempool txs) = Mempool (txs ++ [tx])
