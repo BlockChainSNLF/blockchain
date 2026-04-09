@@ -8,6 +8,8 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import network.NodeService
+import network.dto.BlockDto
+import network.dto.BlockResponse
 import network.dto.ErrorDto
 import network.dto.ErrorResponse
 import network.dto.RegisterPeerRequest
@@ -15,6 +17,8 @@ import network.dto.SuccessResponse
 import network.dto.TransactionDto
 import network.dto.TransactionResponse
 import network.results.Accepted
+import network.results.AcceptedBlock
+import network.results.RejectedBlockSubmission
 import network.results.RejectedSubmission
 
 fun Application.configureRoutes(nodeService: NodeService) {
@@ -85,5 +89,50 @@ fun Application.configureRoutes(nodeService: NodeService) {
         }
 
         post("/wallet") {call.respond(nodeService.createWallet())}
+
+        post("/blocks"){
+            val block = try {
+                call.receive<BlockDto>()
+            } catch (_: Exception) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    ErrorResponse(
+                        status = "error",
+                        error = ErrorDto(
+                            code = "INVALID_BLOCK",
+                            message = "Malformed or incomplete block JSON"
+                        )
+                    )
+                )
+                return@post
+            }
+
+            when (val result = nodeService.submitBlock(block)) {
+                is AcceptedBlock -> {
+                    call.respond(
+                        HttpStatusCode.Accepted,
+                        BlockResponse(
+                            status = "ok",
+                            accepted = true,
+                            chainLength = result.chainLength
+                        )
+                    )
+                }
+
+                is RejectedBlockSubmission -> {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        ErrorResponse(
+                            status = "error",
+                            error = ErrorDto(
+                                code = result.code,
+                                message = result.message
+                            )
+                        )
+                    )
+                }
+            }
+        }
+
     }
 }

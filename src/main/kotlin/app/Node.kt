@@ -5,6 +5,7 @@ import mempool.MempoolManager
 import network.DefaultNodeService
 import network.NodeService
 import network.bootstrap.BootstrapService
+import network.broadcast.BroadcastService
 import network.client.PeerClient
 import network.server.startServer
 import validators.signature.EthersSignatureValidator
@@ -31,6 +32,7 @@ class Node(
             address = config.address,
             publicKey = config.publicKey,
             mempoolManager = mempoolManager,
+            broadcastService = BroadcastService(peerClient),
             initialChain = emptyList(),
             initialPeers = config.seedPeers.toSet()
         )
