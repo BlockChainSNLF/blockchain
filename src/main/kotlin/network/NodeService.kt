@@ -7,7 +7,8 @@ import network.dto.PeersResponse
 import network.dto.RegisterPeerResponse
 import network.dto.StatusResponse
 import network.dto.TransactionDto
-import network.dto.TransactionResponse
+import network.results.MineResult
+import network.results.ReceiveBlockResult
 import network.results.SubmitTransactionResult
 
 interface NodeService {
@@ -19,7 +20,10 @@ interface NodeService {
 
     fun replaceChainFromBootstrap(remoteChain: List<BlockDto>)
     fun addPeers(peers: List<String>)
+
     fun submitTransaction(transactionDto: TransactionDto): SubmitTransactionResult
+    fun receiveBlock(blockDto: BlockDto): ReceiveBlockResult
+    fun mine(trigger: String = "manual"): MineResult
 
     fun createWallet(): CreateWalletResponse
 }
