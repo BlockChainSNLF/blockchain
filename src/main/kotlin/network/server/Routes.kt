@@ -12,6 +12,7 @@ import network.dto.BlockDto
 import network.dto.BlockResponse
 import network.dto.ErrorDto
 import network.dto.ErrorResponse
+import network.dto.MinerResponse
 import network.dto.RegisterPeerRequest
 import network.dto.SuccessResponse
 import network.dto.TransactionDto
@@ -20,6 +21,9 @@ import network.results.Accepted
 import network.results.AcceptedBlock
 import network.results.RejectedBlockSubmission
 import network.results.RejectedSubmission
+import miner.MinedBlock
+import miner.NotMined
+import block.BlockMapper
 
 fun Application.configureRoutes(nodeService: NodeService) {
     routing {
@@ -90,7 +94,7 @@ fun Application.configureRoutes(nodeService: NodeService) {
 
         post("/wallet") {call.respond(nodeService.createWallet())}
 
-        post("/blocks"){
+        post("/blocks") {
             val block = try {
                 call.receive<BlockDto>()
             } catch (_: Exception) {
@@ -110,10 +114,11 @@ fun Application.configureRoutes(nodeService: NodeService) {
             when (val result = nodeService.submitBlock(block)) {
                 is AcceptedBlock -> {
                     call.respond(
-                        HttpStatusCode.Accepted,
+                        HttpStatusCode.OK,
                         BlockResponse(
                             status = "ok",
                             accepted = true,
+                            action = "appended",
                             chainLength = result.chainLength
                         )
                     )
@@ -127,6 +132,34 @@ fun Application.configureRoutes(nodeService: NodeService) {
                             error = ErrorDto(
                                 code = result.code,
                                 message = result.message
+                            )
+                        )
+                    )
+                }
+            }
+        }
+
+        post("/mine") {
+            when (val result = nodeService.mine()) {
+                is MinedBlock -> {
+                    call.respond(
+                        HttpStatusCode.OK,
+                        MinerResponse(
+                            mined = true,
+                            trigger = result.trigger,
+                            block = BlockMapper.toDto(result.block)
+                        )
+                    )
+                }
+
+                is NotMined -> {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        ErrorResponse(
+                            status = "error",
+                            error = ErrorDto(
+                                code = "MINING_FAILED",
+                                message = result.reason
                             )
                         )
                     )

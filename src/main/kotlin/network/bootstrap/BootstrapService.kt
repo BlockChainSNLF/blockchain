@@ -24,7 +24,9 @@ class BootstrapService(
                 println("Seed reachable: ${status.node.url}")
 
                 val remoteChain = peerClient.getChain(seed)
-                nodeService.replaceChainFromBootstrap(remoteChain.chain)
+                if (!nodeService.replaceChainFromBootstrap(remoteChain.chain)) {
+                    println("Remote chain from $seed was not accepted")
+                }
 
                 val registerResponse = peerClient.registerAtPeer(seed, myUrl)
                 nodeService.addPeers(registerResponse.peers + seed)
