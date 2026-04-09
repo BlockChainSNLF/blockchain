@@ -17,6 +17,8 @@ class Mempool private constructor(
         validator
     )
 
+    fun all(): List<Transaction> = transactions
+
     fun addTransaction(transaction: Transaction): AddTransactionResult {
 
         return when (val result = validator.validateTransaction(transaction)) {
@@ -27,6 +29,10 @@ class Mempool private constructor(
                 Added(Mempool(transactions + transaction, validator))
             }
         }
+    }
+
+    fun removeByIds(ids: List<String>): Mempool {
+        return Mempool(transactions.filter { it.getId() !in ids }, validator)
     }
 
     fun isDuplicate(transaction: Transaction): Boolean {

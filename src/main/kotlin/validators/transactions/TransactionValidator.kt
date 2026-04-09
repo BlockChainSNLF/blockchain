@@ -101,7 +101,7 @@ class TransactionValidator(
                         signature = transaction.getSignature()
                 )
         ) {
-            errors.add("signature must be valid for the canonical payload")
+            errors.add("Signature Invalid")
         }
     }
 
@@ -109,9 +109,9 @@ class TransactionValidator(
             transaction: TransferTransaction,
             errors: MutableList<String>
     ) {
-        if (!balanceService.hasSufficientBalance(transaction.getFrom(), transaction.getAmount())) {
-            errors.add("sender has insufficient balance")
-        }
+        //if (!balanceService.hasSufficientBalance(transaction.getFrom(), transaction.getAmount())) {
+        //    errors.add("sender has insufficient balance")
+        //}
     }
 
     private fun isValidUuid(value: String): Boolean {
