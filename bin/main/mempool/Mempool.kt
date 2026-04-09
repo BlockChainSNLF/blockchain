@@ -17,9 +17,7 @@ class Mempool private constructor(
         validator
     )
 
-
     fun all(): List<Transaction> = transactions
-
 
     fun addTransaction(transaction: Transaction): AddTransactionResult {
 
@@ -32,7 +30,6 @@ class Mempool private constructor(
             }
         }
     }
-
 
     fun removeByIds(ids: List<String>): Mempool {
         return Mempool(transactions.filter { it.getId() !in ids }, validator)
