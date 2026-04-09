@@ -1,15 +1,26 @@
-dist-newstyle/
-cabal.project.local
-cabal.project.local~
-.ghc.environment.*
-*.hi
-*.o
-
 # HLS / editor
 .vscode/
 *.swp
 *.swo
 
+# IntelliJ / JetBrains
+.idea/
+*.iml
+out/
+
+# Gradle
+.gradle/
+build/
+
+# Kotlin / Java
+*.class
+
 # Env / local
 .env
-.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
