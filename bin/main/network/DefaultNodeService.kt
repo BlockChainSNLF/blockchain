@@ -4,6 +4,7 @@ import mempool.Added
 import mempool.Duplicate
 import mempool.MempoolManager
 import mempool.Rejected
+import network.broadcast.BroadcastService
 import network.dto.BlockDto
 import network.dto.ChainDataDto
 import network.dto.ChainResponse
@@ -16,7 +17,9 @@ import network.dto.StatusResponse
 import network.dto.TransactionDto
 import network.dto.WalletDto
 import network.results.Accepted
+import network.results.RejectedBlockSubmission
 import network.results.RejectedSubmission
+import network.results.SubmitBlockResultResult
 import network.results.SubmitTransactionResult
 import transactions.TransactionMapper
 import wallets.factory.EthersWalletFactory
@@ -26,6 +29,7 @@ class DefaultNodeService(
     private val address: String,
     private val publicKey: String,
     private val mempoolManager: MempoolManager,
+    private val broadcastService: BroadcastService,
     initialChain: List<BlockDto> = emptyList(),
     initialPeers: Set<String> = emptySet()
 ) : NodeService {
@@ -107,7 +111,13 @@ class DefaultNodeService(
 
 
         return when (val result = mempoolManager.addTransaction(transaction)) {
-            is Added -> Accepted(transaction.getId())
+            is Added -> {
+                broadcastService.broadcastTransaction(
+                    peers = peers.filter { it != baseUrl },
+                    tx = transactionDto
+                )
+                Accepted(transaction.getId())
+            }
 
             Duplicate -> RejectedSubmission(
                 "DUPLICATE_TRANSACTION",
@@ -134,5 +144,33 @@ class DefaultNodeService(
                 address = wallet.address
             )
         )
+    }
+
+    override fun submitBlock(blockDto: BlockDto): SubmitBlockResultResult {
+        val block = try {
+            BlockMapper.fromDto(BlockDto)
+        } catch (_: Exception) {
+            return RejectedBlockSubmission(
+                code = "INVALID_TRANSACTION",
+                message = "Could not parse transaction"
+            )
+        }
+
+
+        return when (val result = chainManager.addBlock(block)) {
+            is Added -> {
+                broadcastService.broadcastTransaction(
+                    peers = peers.filter { it != baseUrl },
+                    block = blockDto
+                )
+                Accepted(block.getIndex())
+            }
+
+            else -> RejectedBlockSubmission(
+                "TO_IMPLEMENT",
+                "TO_IMPLEMENT"
+            )
+
+        }
     }
 }

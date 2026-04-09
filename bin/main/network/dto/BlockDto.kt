@@ -9,6 +9,6 @@ data class BlockDto(
     val transactions: List<TransactionDto>,
     val previousHash: String,
     val hash: String,
-    val nonce: String
+    val nonce: Int
 ) {
 }
