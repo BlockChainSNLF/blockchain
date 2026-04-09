@@ -41,7 +41,21 @@ fun Application.configureRoutes(nodeService: NodeService) {
         }
 
         post("/transactions") {
-            val tx = call.receive<TransactionDto>()
+            val tx = try {
+                call.receive<TransactionDto>()
+            } catch (_: Exception) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    ErrorResponse(
+                        status = "error",
+                        error = ErrorDto(
+                            code = "INVALID_TRANSACTION",
+                            message = "Malformed or incomplete transaction JSON"
+                        )
+                    )
+                )
+                return@post
+            }
 
             when (val result = nodeService.submitTransaction(tx)) {
                 is Accepted -> {
