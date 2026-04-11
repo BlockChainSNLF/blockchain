@@ -6,6 +6,7 @@ import common.hexToBytes
 import io.ethers.crypto.Hashing
 import io.ethers.crypto.Secp256k1
 import java.math.BigInteger
+import java.security.MessageDigest
 import java.util.Base64
 
 object EthersSignatureValidator : SignatureValidator {
@@ -18,9 +19,9 @@ object EthersSignatureValidator : SignatureValidator {
         return try {
             val expectedPublicKey = hexToBytes(publicKey)
 
-            val messageHash = Hashing.keccak256(
-                payload.toByteArray(Charsets.UTF_8)
-            )
+            val messageHash = MessageDigest
+                .getInstance("SHA-256")
+                .digest(payload.toByteArray(Charsets.UTF_8))
 
             val signatureBytes = Base64.getDecoder().decode(signature)
             if (signatureBytes.size != 65) return false
