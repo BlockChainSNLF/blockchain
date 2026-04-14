@@ -1,6 +1,7 @@
 package network
 
 import network.dto.BlockDto
+import network.dto.BalanceResponse
 import network.dto.ChainResponse
 import network.dto.CreateWalletResponse
 import network.dto.PeersResponse
@@ -23,6 +24,7 @@ interface NodeService {
     fun submitTransaction(transactionDto: TransactionDto): SubmitTransactionResult
     fun submitBlock(blockDto: BlockDto): SubmitBlockResultResult
     fun mine(trigger: String = "manual"): MineResult
+    fun getBalance(address: String): BalanceResponse
 
     fun createWallet(): CreateWalletResponse
 }

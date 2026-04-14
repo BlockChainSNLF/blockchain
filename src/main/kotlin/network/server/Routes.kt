@@ -43,6 +43,25 @@ fun Application.configureRoutes(nodeService: NodeService) {
             call.respond(nodeService.getPeers())
         }
 
+        get("/balance") {
+            val address = call.request.queryParameters["address"]?.trim().orEmpty()
+            if (address.isBlank()) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    ErrorResponse(
+                        status = "error",
+                        error = ErrorDto(
+                            code = "INVALID_ADDRESS",
+                            message = "Query parameter 'address' is required"
+                        )
+                    )
+                )
+                return@get
+            }
+
+            call.respond(nodeService.getBalance(address))
+        }
+
         post("/peers") {
             val request = call.receive<RegisterPeerRequest>()
             call.respond(nodeService.registerPeer(request.url))

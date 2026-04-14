@@ -31,6 +31,8 @@ class Node(
             baseUrl = config.baseUrl,
             address = config.address,
             publicKey = config.publicKey,
+            peerClient = peerClient,
+            transactionValidator = transactionValidator,
             mempoolManager = mempoolManager,
             broadcastService = BroadcastService(peerClient),
             initialChain = emptyList(),

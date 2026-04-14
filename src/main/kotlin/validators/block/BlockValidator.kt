@@ -19,14 +19,22 @@ class BlockValidator(
 
         validateStructure(block, errors)
 
-        if (errors.isNotEmpty()) {
-            return Invalid(errors)
+        val result = if (errors.isNotEmpty()) {
+            Invalid(errors.toList())
+        } else {
+            validateCryptography(block, errors)
+            validateState(block, previousBlock, errors)
+            if (errors.isEmpty()) Valid else Invalid(errors.toList())
         }
 
-        validateCryptography(block, errors)
-        validateState(block, previousBlock, errors)
+        when (result) {
+            Valid -> println("Block validation: VALID | index=${block.getIndex()} | hash=${block.getHash()} | msg=ok")
+            is Invalid -> println(
+                "Block validation: INVALID | index=${block.getIndex()} | hash=${block.getHash()} | msg=${result.messages.joinToString("; ")}"
+            )
+        }
 
-        return if (errors.isEmpty()) Valid else Invalid(errors)
+        return result
     }
 
     private fun validateStructure(
@@ -135,9 +143,6 @@ class BlockValidator(
                 errors.add("previousHash must match previous block hash")
             }
 
-            if (block.getIndex() != previousBlock.getIndex() + 1) {
-                errors.add("index must be previous.index + 1")
-            }
 
             if (block.getTimestamp() <= previousBlock.getTimestamp()) {
                 errors.add("timestamp must be strictly greater than previous block timestamp")

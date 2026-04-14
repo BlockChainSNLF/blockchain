@@ -5,6 +5,7 @@ import chain.BlockAppended
 import chain.BlockRejected
 import chain.ChainManager
 import chain.ChainReplaced
+import kotlinx.coroutines.runBlocking
 import mempool.Added
 import mempool.Duplicate
 import mempool.MempoolManager
@@ -13,6 +14,8 @@ import miner.MineResult
 import miner.MinedBlock
 import miner.MinerService
 import network.broadcast.BroadcastService
+import network.client.PeerClient
+import network.dto.BalanceResponse
 import network.dto.BlockDto
 import network.dto.ChainDataDto
 import network.dto.ChainResponse
@@ -31,6 +34,7 @@ import network.results.RejectedSubmission
 import network.results.SubmitBlockResultResult
 import network.results.SubmitTransactionResult
 import transactions.TransactionMapper
+import wallets.balanceService.BalanceService
 import wallets.factory.EthersWalletFactory
 import validators.block.BlockValidator
 import validators.transactions.TransactionValidator
@@ -49,6 +53,7 @@ class DefaultNodeService(
     private val baseUrl: String,
     private val address: String,
     private val publicKey: String,
+    private val peerClient: PeerClient,
     transactionValidator: TransactionValidator,
     private val mempoolManager: MempoolManager,
     private val broadcastService: BroadcastService,
@@ -200,6 +205,14 @@ class DefaultNodeService(
         )
     }
 
+    override fun getBalance(address: String): BalanceResponse {
+        return BalanceResponse(
+            status = "ok",
+            address = address,
+            balance = BalanceService.getBalance(address)
+        )
+    }
+
     override fun submitBlock(blockDto: BlockDto): SubmitBlockResultResult {
         val block = BlockMapper.fromDto(blockDto) ?: run {
             return RejectedBlockSubmission(
@@ -215,6 +228,19 @@ class DefaultNodeService(
             )
         }
 
+        val expectedIndex = chainManager.latest()?.getIndex()?.plus(1) ?: 0
+        if (block.getIndex() > expectedIndex) {
+            val resynced = resyncFromPeers()
+
+            if (resynced && chainManager.all().any { it.getHash() == block.getHash() }) {
+                return AcceptedBlock(chainLength = chainManager.all().size)
+            }
+        }
+
+        return appendIncomingBlock(block, blockDto)
+    }
+
+    private fun appendIncomingBlock(block: block.Block, blockDto: BlockDto): SubmitBlockResultResult {
         return when (val result = chainManager.addBlock(block)) {
             is BlockAppended -> {
                 mempoolManager.removeByIds(block.getTransactions().map { it.getId() })
@@ -233,10 +259,28 @@ class DefaultNodeService(
         }
     }
 
+    private fun resyncFromPeers(): Boolean = runBlocking {
+        val peerChains = peers
+            .filter { it != baseUrl }
+            .mapNotNull { peer -> runCatching { peerClient.getChain(peer) }.getOrNull() }
+
+        val longest = peerChains.maxByOrNull { it.length } ?: return@runBlocking false
+        return@runBlocking replaceChainFromBootstrap(longest.chain)
+    }
+
     override fun mine(trigger: String): MineResult {
-        return when (trigger) {
+        val result = when (trigger) {
             "auto" -> minerService.tryAutoMine()
             else -> minerService.mineManual()
         }
+
+        if (result is MinedBlock) {
+            broadcastService.broadcastBlock(
+                peers = peers.filter { it != baseUrl },
+                block = BlockMapper.toDto(result.block)
+            )
+        }
+
+        return result
     }
 }

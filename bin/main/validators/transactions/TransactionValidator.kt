@@ -1,11 +1,14 @@
 package validators.transactions
 
+import app.NetworkParams
 import transactions.*
 import validators.signature.SignatureValidator
 import wallets.address.AddressDerivator
 import wallets.balanceService.BalanceService
 
 import java.util.UUID
+
+private const val ZERO_64 = "0000000000000000000000000000000000000000000000000000000000000000"
 
 class TransactionValidator(
     private val signatureValidator: SignatureValidator,
@@ -20,7 +23,37 @@ class TransactionValidator(
     }
 
     private fun validateCoinbase(transaction: CoinbaseTransaction): TransactionValidationResult {
-        return Invalid(listOf("Coinbase Not Supported yet, Must be transfer only"))
+        val errors = mutableListOf<String>()
+
+        if (!isValidUuid(transaction.getId())) {
+            errors.add("id must be a valid UUIDv4")
+        }
+
+        if (transaction.getFrom() != "SYSTEM") {
+            errors.add("coinbase from must be SYSTEM")
+        }
+
+        if (!isValidAddressHex(transaction.getTo())) {
+            errors.add("coinbase to must be a valid address")
+        }
+
+        if (transaction.getAmount() != NetworkParams.BLOCK_REWARD) {
+            errors.add("coinbase amount must be ${NetworkParams.BLOCK_REWARD}")
+        }
+
+        if (transaction.getTimestamp() <= 0) {
+            errors.add("timestamp must be greater than 0")
+        }
+
+        if (transaction.getPublicKey() != ZERO_64) {
+            errors.add("coinbase publicKey must be all zeros")
+        }
+
+        if (transaction.getSignature() != ZERO_64) {
+            errors.add("coinbase signature must be all zeros")
+        }
+
+        return if (errors.isEmpty()) Valid else Invalid(errors)
     }
 
     private fun validateTransfer(transaction: TransferTransaction): TransactionValidationResult {
@@ -54,8 +87,8 @@ class TransactionValidator(
 
         if (transaction.getTo().isBlank()) {
             errors.add("to is required")
-        }else if (!isValidAddressHex(transaction.getFrom())) {
-            errors.add("from to invalid")
+        }else if (!isValidAddressHex(transaction.getTo())) {
+            errors.add("to is invalid")
         }
 
         if (transaction.getFrom() == transaction.getTo()) {
@@ -109,15 +142,15 @@ class TransactionValidator(
             transaction: TransferTransaction,
             errors: MutableList<String>
     ) {
-        //if (!balanceService.hasSufficientBalance(transaction.getFrom(), transaction.getAmount())) {
-        //    errors.add("sender has insufficient balance")
-        //}
+        if (!balanceService.hasSufficientBalance(transaction.getFrom(), transaction.getAmount())) {
+            errors.add("sender has insufficient balance")
+        }
     }
 
     private fun isValidUuid(value: String): Boolean {
         return try {
-            UUID.fromString(value)
-            true
+            val uuid = UUID.fromString(value)
+            uuid.version() == 4
         } catch (_: IllegalArgumentException) {
             false
         }
