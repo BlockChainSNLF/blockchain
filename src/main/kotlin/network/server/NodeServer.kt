@@ -8,22 +8,30 @@ import io.ktor.server.plugins.calllogging.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import network.NodeService
+import io.ktor.server.routing.Routing
 
 fun startServer(
     host: String,
     port: Int,
-    nodeService: NodeService
-) {
-    embeddedServer(
+    nodeService: NodeService,
+    wait: Boolean = true,
+    additionalRoutes: Routing.() -> Unit = {}
+){
+    val server = embeddedServer(
         CIO,
         host = host,
         port = port
     ) {
-        module(nodeService)
-    }.start(wait = true)
+        module(nodeService, additionalRoutes)
+    }
+
+    server.start(wait = wait)
 }
 
-fun Application.module(nodeService: NodeService) {
+fun Application.module(
+    nodeService: NodeService,
+    additionalRoutes: Routing.() -> Unit = {}
+) {
 
     install(CallLogging)
 
@@ -35,5 +43,5 @@ fun Application.module(nodeService: NodeService) {
         })
     }
 
-    configureRoutes(nodeService)
+    configureRoutes(nodeService, additionalRoutes)
 }

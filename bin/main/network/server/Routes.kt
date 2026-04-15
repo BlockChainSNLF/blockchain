@@ -6,6 +6,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.Routing
 import io.ktor.server.routing.routing
 import network.NodeService
 import network.dto.BlockDto
@@ -25,7 +26,10 @@ import miner.MinedBlock
 import miner.NotMined
 import block.BlockMapper
 
-fun Application.configureRoutes(nodeService: NodeService) {
+fun Application.configureRoutes(
+    nodeService: NodeService,
+    additionalRoutes: Routing.() -> Unit = {}
+) {
     routing {
         get("/health") {
             call.respond(SuccessResponse())
@@ -185,6 +189,8 @@ fun Application.configureRoutes(nodeService: NodeService) {
                 }
             }
         }
+
+        additionalRoutes()
 
     }
 }

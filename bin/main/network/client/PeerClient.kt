@@ -11,17 +11,24 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import network.dto.BlockDto
 import network.dto.BlockResponse
 import network.dto.ChainResponse
+import network.dto.ErrorResponse
 import network.dto.PeersResponse
 import network.dto.RegisterPeerRequest
 import network.dto.RegisterPeerResponse
 import network.dto.StatusResponse
 import network.dto.TransactionDto
 import network.dto.TransactionResponse
+
+sealed interface SubmitTransactionClientResult
+data class SubmitTransactionAccepted(val txId: String) : SubmitTransactionClientResult
+data class SubmitTransactionRejected(val code: String, val message: String) : SubmitTransactionClientResult
+data class SubmitTransactionFailed(val message: String) : SubmitTransactionClientResult
 
 
 class PeerClient {
@@ -72,5 +79,31 @@ class PeerClient {
             contentType(ContentType.Application.Json)
             setBody(tx)
         }.body()
+    }
+
+    suspend fun submitTransaction(baseUrl: String, tx: TransactionDto): SubmitTransactionClientResult {
+        val response = client.post("$baseUrl/transactions") {
+            contentType(ContentType.Application.Json)
+            setBody(tx)
+        }
+
+        return if (response.status.isSuccess()) {
+            runCatching {
+                val body = response.body<TransactionResponse>()
+                SubmitTransactionAccepted(txId = body.txId)
+            }.getOrElse {
+                SubmitTransactionFailed("Could not parse transaction success response")
+            }
+        } else {
+            runCatching {
+                val body = response.body<ErrorResponse>()
+                SubmitTransactionRejected(
+                    code = body.error.code,
+                    message = body.error.message
+                )
+            }.getOrElse {
+                SubmitTransactionFailed("Transaction rejected with HTTP ${response.status.value}")
+            }
+        }
     }
 }

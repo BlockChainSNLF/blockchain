@@ -1,9 +1,11 @@
 package mempool
 
+import transactions.TransferTransaction
 import transactions.Transaction
 import validators.transactions.Invalid
 import validators.transactions.TransactionValidator
 import validators.transactions.Valid
+import wallets.balanceService.BalanceService
 
 class Mempool private constructor(
     private val transactions: List<Transaction>,
@@ -27,6 +29,8 @@ class Mempool private constructor(
             is Invalid -> Rejected(result)
             Valid -> if (isDuplicate(transaction)){
                 Duplicate
+            }else if (transaction is TransferTransaction && !hasSufficientBalanceIncludingPending(transaction)) {
+                Rejected(Invalid(listOf("sender has insufficient balance considering pending transactions")))
             }else{
                 Added(Mempool(transactions + transaction, validator))
             }
@@ -40,5 +44,15 @@ class Mempool private constructor(
 
     fun isDuplicate(transaction: Transaction): Boolean {
         return transactions.any { it.getId() == transaction.getId() }
+    }
+
+    private fun hasSufficientBalanceIncludingPending(transaction: TransferTransaction): Boolean {
+        val pendingSpent = transactions
+            .filterIsInstance<TransferTransaction>()
+            .filter { it.getFrom() == transaction.getFrom() }
+            .sumOf { it.getAmount() }
+
+        val available = BalanceService.getBalance(transaction.getFrom()) - pendingSpent
+        return available >= transaction.getAmount()
     }
 }

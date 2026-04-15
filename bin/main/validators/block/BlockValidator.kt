@@ -5,9 +5,11 @@ import block.Block
 import block.BlockHashing
 import transactions.Coinbase
 import transactions.CoinbaseTransaction
+import transactions.TransferTransaction
 import validators.transactions.Invalid as TransactionInvalid
 import validators.transactions.TransactionValidator
 import validators.transactions.Valid as TransactionValid
+import wallets.balanceService.BalanceService
 
 private const val ZERO_64 = "0000000000000000000000000000000000000000000000000000000000000000"
 
@@ -149,6 +151,8 @@ class BlockValidator(
             }
         }
 
+        val balanceDeltas = mutableMapOf<String, Int>()
+
         block.getTransactions().forEachIndexed { txIndex, transaction ->
             when (val validation = transactionValidator.validateTransaction(transaction)) {
                 is TransactionInvalid -> {
@@ -157,7 +161,23 @@ class BlockValidator(
                     }
                 }
 
-                TransactionValid -> Unit
+                TransactionValid -> {
+                    when (transaction) {
+                        is CoinbaseTransaction -> {
+                            balanceDeltas[transaction.getTo()] = balanceDeltas.getOrDefault(transaction.getTo(), 0) + transaction.getAmount()
+                        }
+
+                        is TransferTransaction -> {
+                            val availableBalance = BalanceService.getBalance(transaction.getFrom()) + balanceDeltas.getOrDefault(transaction.getFrom(), 0)
+                            if (availableBalance < transaction.getAmount()) {
+                                errors.add("transactions[$txIndex]: sender has insufficient balance considering previous transactions in the block")
+                            } else {
+                                balanceDeltas[transaction.getFrom()] = balanceDeltas.getOrDefault(transaction.getFrom(), 0) - transaction.getAmount()
+                                balanceDeltas[transaction.getTo()] = balanceDeltas.getOrDefault(transaction.getTo(), 0) + transaction.getAmount()
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -8,6 +8,9 @@ import network.bootstrap.BootstrapService
 import network.broadcast.BroadcastService
 import network.client.PeerClient
 import network.server.startServer
+import signing.EthersTransactionSigner
+import ui.HttpTransactionSubmissionGateway
+import ui.web.configureWebTransactionUi
 import validators.signature.EthersSignatureValidator
 import validators.transactions.TransactionValidator
 import wallets.address.EthersAddressDerivator
@@ -51,10 +54,22 @@ class Node(
 
         bootstrapService.bootstrap()
 
+        val transactionSigner = EthersTransactionSigner()
+        val transactionSubmissionGateway = HttpTransactionSubmissionGateway(
+            peerClient = peerClient,
+            nodeUrl = config.baseUrl
+        )
+
         startServer(
             host = config.bindHost,
             port = config.port,
-            nodeService = nodeService
+            nodeService = nodeService,
+            additionalRoutes = {
+                configureWebTransactionUi(
+                    signer = transactionSigner,
+                    submissionGateway = transactionSubmissionGateway
+                )
+            }
         )
     }
 }
