@@ -115,6 +115,50 @@ fun Application.configureRoutes(
             }
         }
 
+        post("/transaction") {
+            val tx = try {
+                call.receive<TransactionDto>()
+            } catch (_: Exception) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    ErrorResponse(
+                        status = "error",
+                        error = ErrorDto(
+                            code = "INVALID_TRANSACTION",
+                            message = "Malformed or incomplete transaction JSON"
+                        )
+                    )
+                )
+                return@post
+            }
+
+            when (val result = nodeService.submitTransaction(tx)) {
+                is Accepted -> {
+                    call.respond(
+                        HttpStatusCode.Accepted,
+                        TransactionResponse(
+                            status = "ok",
+                            accepted = true,
+                            txId = result.txId
+                        )
+                    )
+                }
+
+                is RejectedSubmission -> {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        ErrorResponse(
+                            status = "error",
+                            error = ErrorDto(
+                                code = result.code,
+                                message = result.message
+                            )
+                        )
+                    )
+                }
+            }
+        }
+
         post("/wallet") {call.respond(nodeService.createWallet())}
 
         post("/blocks") {

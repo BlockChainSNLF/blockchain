@@ -71,7 +71,12 @@ class DefaultNodeService(
         mempoolManager = mempoolManager,
         minerAddress = address,
     )
-    private val peers: MutableSet<String> = initialPeers.toMutableSet()
+    private val peers: MutableSet<String> = normalizePeerUrls(initialPeers).toMutableSet()
+
+    private fun knownPeersExcludingSelf(): List<String> {
+        val self = normalizePeerUrl(baseUrl)
+        return normalizePeerUrls(peers).filter { it != self }
+    }
 
     override fun health(): Map<String, String> {
         return mapOf("status" to "ok")
@@ -104,22 +109,26 @@ class DefaultNodeService(
     }
 
     override fun getPeers(): PeersResponse {
+        val normalizedPeers = normalizePeerUrls(peers)
         return PeersResponse(
             status = "ok",
-            peers = peers.toList(),
-            count = peers.size
+            peers = normalizedPeers,
+            count = normalizedPeers.size
         )
     }
 
     override fun registerPeer(url: String): RegisterPeerResponse {
-        if (url != baseUrl) {
-            peers.add(url)
+        val normalizedSelf = normalizePeerUrl(baseUrl)
+        val normalizedPeer = normalizePeerUrl(url)
+        if (normalizedPeer != null && normalizedPeer != normalizedSelf) {
+            peers.add(normalizedPeer)
         }
 
+        val allPeers = (knownPeersExcludingSelf() + listOfNotNull(normalizedSelf)).distinct()
         return RegisterPeerResponse(
             status = "ok",
-            registered = url,
-            peers = (peers + baseUrl).toList()
+            registered = normalizedPeer ?: url,
+            peers = allPeers
         )
     }
 
@@ -143,7 +152,9 @@ class DefaultNodeService(
     }
 
     override fun addPeers(peers: List<String>) {
-        this.peers.addAll(peers.filter { it != baseUrl })
+        val self = normalizePeerUrl(baseUrl)
+        val validPeers = normalizePeerUrls(peers).filter { it != self }
+        this.peers.addAll(validPeers)
     }
 
     override fun submitTransaction(transactionDto: TransactionDto): SubmitTransactionResult {
@@ -164,14 +175,14 @@ class DefaultNodeService(
         return when (val result = mempoolManager.addTransaction(transaction)) {
             is Added -> {
                 broadcastService.broadcastTransaction(
-                    peers = peers.filter { it != baseUrl },
+                    peers = knownPeersExcludingSelf(),
                     tx = transactionDto
                 )
 
                 val autoMineResult = minerService.tryAutoMine()
                 if (autoMineResult is MinedBlock) {
                     broadcastService.broadcastBlock(
-                        peers = peers.filter { it != baseUrl },
+                        peers = knownPeersExcludingSelf(),
                         block = BlockMapper.toDto(autoMineResult.block)
                     )
                 }
@@ -245,7 +256,7 @@ class DefaultNodeService(
             is BlockAppended -> {
                 mempoolManager.removeByIds(block.getTransactions().map { it.getId() })
                 broadcastService.broadcastBlock(
-                    peers = peers.filter { it != baseUrl },
+                    peers = knownPeersExcludingSelf(),
                     block = blockDto
                 )
                 AcceptedBlock(chainLength = result.chainLength)
@@ -261,7 +272,8 @@ class DefaultNodeService(
 
     private fun resyncFromPeers(): Boolean = runBlocking {
         val peerChains = peers
-            .filter { it != baseUrl }
+            .let(::normalizePeerUrls)
+            .filter { it != normalizePeerUrl(baseUrl) }
             .mapNotNull { peer -> runCatching { peerClient.getChain(peer) }.getOrNull() }
 
         val longest = peerChains.maxByOrNull { it.length } ?: return@runBlocking false
@@ -276,7 +288,7 @@ class DefaultNodeService(
 
         if (result is MinedBlock) {
             broadcastService.broadcastBlock(
-                peers = peers.filter { it != baseUrl },
+                peers = knownPeersExcludingSelf(),
                 block = BlockMapper.toDto(result.block)
             )
         }

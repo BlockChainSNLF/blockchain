@@ -4,6 +4,8 @@ import kotlinx.coroutines.runBlocking
 import network.NodeService
 import network.client.PeerClient
 import network.dto.ChainResponse
+import network.normalizePeerUrl
+import network.normalizePeerUrls
 
 class BootstrapService(
     private val peerClient: PeerClient,
@@ -12,7 +14,10 @@ class BootstrapService(
     private val seedPeers: List<String>
 ) {
     fun bootstrap() = runBlocking {
-        if (seedPeers.isEmpty()) {
+        val normalizedMyUrl = normalizePeerUrl(myUrl)
+        val normalizedSeeds = normalizePeerUrls(seedPeers)
+
+        if (normalizedSeeds.isEmpty()) {
             println("No seed peers configured. Starting standalone.")
             return@runBlocking
         }
@@ -21,14 +26,14 @@ class BootstrapService(
         val responsiveSeeds = mutableListOf<String>()
         val chainCandidates = linkedMapOf<String, ChainResponse>()
 
-        for (seed in seedPeers) {
+        for (seed in normalizedSeeds) {
             try {
                 println("Discovering peers from $seed")
 
                 val peersResponse = peerClient.getPeers(seed)
                 responsiveSeeds.add(seed)
                 discoveredPeers.add(seed)
-                discoveredPeers.addAll(peersResponse.peers)
+                discoveredPeers.addAll(normalizePeerUrls(peersResponse.peers))
             } catch (e: Exception) {
                 println("Failed to discover peers from $seed: ${e.message}")
             }
@@ -39,7 +44,7 @@ class BootstrapService(
             return@runBlocking
         }
 
-        for (peer in discoveredPeers.filter { it != myUrl }) {
+        for (peer in discoveredPeers.filter { it != normalizedMyUrl }) {
             try {
                 println("Fetching chain from $peer")
                 chainCandidates[peer] = peerClient.getChain(peer)
@@ -58,13 +63,16 @@ class BootstrapService(
         if (registrationTarget != null) {
             try {
                 val registerResponse = peerClient.registerAtPeer(registrationTarget, myUrl)
-                nodeService.addPeers((discoveredPeers + registerResponse.peers + registrationTarget).filter { it != myUrl })
+                nodeService.addPeers(
+                    normalizePeerUrls(discoveredPeers + registerResponse.peers + registrationTarget)
+                        .filter { it != normalizedMyUrl }
+                )
             } catch (e: Exception) {
                 println("Failed to register at $registrationTarget: ${e.message}")
-                nodeService.addPeers(discoveredPeers.filter { it != myUrl })
+                nodeService.addPeers(discoveredPeers.filter { it != normalizedMyUrl })
             }
         } else {
-            nodeService.addPeers(discoveredPeers.filter { it != myUrl })
+            nodeService.addPeers(discoveredPeers.filter { it != normalizedMyUrl })
         }
 
         println("Bootstrap complete")
