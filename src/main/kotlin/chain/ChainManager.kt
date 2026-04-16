@@ -53,12 +53,23 @@ class ChainManager(
     }
 
     private fun isValidChain(candidate: List<Block>): Boolean {
-        candidate.forEachIndexed { index, block ->
-            val previous = if (index == 0) null else candidate[index - 1]
-            val validation = blockValidator.validateBlock(block, previous)
-            if (validation is Invalid) {
-                return false
+        val originalChain = chain
+
+        // Validate the candidate against its own evolving ledger state.
+        BalanceService.rebuildFromChain(emptyList())
+
+        try {
+            candidate.forEachIndexed { index, block ->
+                val previous = if (index == 0) null else candidate[index - 1]
+                val validation = blockValidator.validateBlock(block, previous)
+                if (validation is Invalid) {
+                    return false
+                }
+
+                BalanceService.applyBlock(block)
             }
+        } finally {
+            BalanceService.rebuildFromChain(originalChain)
         }
 
         return true
